@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{admin/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+    <div class="layout">
+        <div th:replace="~{admin/fragments/header :: header}"> </div>
+        <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+
+
+        <!-- Page Container START -->
+        <div class="page-container">
+
+
+            <!-- Content Wrapper START -->
+            <div class="main-content">
+                <form id="updateBlog"  >
+                    <div class="page-header no-gutters has-tab">
+                        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+
+                        </div>
+                    </div>
+                    <div class="tab-content m-t-15">
+                        <div class="tab-pane fade show active" id="product-edit-basic" >
+                            <div class="card">
+                                <div class="card-body">
+                                    <input type="hidden" name="blogId" />
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="image">Ảnh</label>
+                                        <input type="file" name="file" class="form-control" id="image">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="title">Tiêu đề</label>
+                                        <input type="text" class="form-control" id="title" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="detail">Chi tiết</label>
+                                        <input type="text" class="form-control" id="detail" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="des">Mô tả</label>
+                                        <input type="text" class="form-control" id="des" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="isActive">
+                                            <label class="form-check-label" for="isActive">Hoạt động</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="m-b-15 text-right">
+                                        <button type="button" class="btn btn-primary" onclick="updateBlog()">
+                                            <i class="anticon anticon-save"></i>
+                                            <span>Cập nhật</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+        <!-- Page Container END -->
+
+
+        <!-- Search End-->
+
+        <!-- Quick View START -->
+
+        <!-- Quick View END -->
+    </div>
+</div>
+
+
+
+<div th:replace="~{admin/fragments/script :: script}"></div>
+<script>
+    const pathArray = window.location.pathname.split('/');
+const blogId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
+
+    function loadBlog() {
+        fetch(`/admin/Blog/${blogId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Không tìm thấy blog');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("image").value = data.image || '';
+                document.getElementById("title").value = data.title || '';
+                document.getElementById("detail").value = data.detail || '';
+                document.getElementById("des").value = data.description || '';
+                document.getElementById("isActive").checked = data.isActive || false;
+            })
+            .catch(error => {
+                document.getElementById("responseMessage").innerText = "Lỗi khi tải blog: " + error.message;
+                document.getElementById("responseMessage").style.display = "block";
+            });
+    }
+
+    // Hàm cập nhật blog
+    function updateBlog() {
+        const blogData = {
+            image: document.getElementById('image').value,
+            title: document.getElementById("title").value,
+            detail: document.getElementById("detail").value,
+            description: document.getElementById("des").value,
+            isActive: document.getElementById("isActive").checked,
+        };
+
+        fetch(`/admin/Blog/${blogId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(blogData),
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Cập nhật thành công!");
+                // Có thể chuyển hướng về danh sách blog hoặc trang khác nếu cần
+                window.location.href = '/admin/Blog'; // Ví dụ chuyển về danh sách chi nhánh
+
+            } else {
+                alert("Cập nhật thất bại!");
+            }
+        })
+        .catch(error => {
+            document.getElementById("responseMessage").innerText = "Lỗi khi cập nhật blog: " + error.message;
+            document.getElementById("responseMessage").style.display = "block";
+        });
+    }
+
+    // Gọi hàm để tải thông tin blog khi trang được tải
+    loadBlog();
+</script>
+
+</body>
+
+</html>

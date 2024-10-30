@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{admin/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+    <div class="layout">
+        <div th:replace="~{admin/fragments/header :: header}"> </div>
+        <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+
+
+        <!-- Page Container START -->
+        <div class="page-container">
+
+
+            <!-- Content Wrapper START -->
+            <div class="main-content">
+                <form id="addBlogForm">
+                    <div class="page-header no-gutters has-tab">
+                        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+                        </div>
+                    </div>
+                    <div class="tab-content m-t-15">
+                        <div class="tab-pane fade show active" id="product-edit-basic" >
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <div class="form-group">
+                                        <input type="file" id="image" onchange="uploadImage()">
+                                        <img id="imageUrl" alt="Uploaded Image" style="width: 150px; height: 150px;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="title">Tiêu đề </label>
+                                        <input type="text" class="form-control" id="title" >
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="detail">Chi tiết  </label>
+                                        <input type="text" class="form-control" id="detail" >
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="des">Mô tả   </label>
+                                        <input type="text" class="form-control" id="des" >
+
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="isActive">
+                                            <label class="form-check-label" for="isActive" >Hoạt động</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="m-b-15 text-right ">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="anticon anticon-save"></i>
+                                            <span>Thêm mới</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+        <!-- Page Container END -->
+
+
+        <!-- Search End-->
+
+        <!-- Quick View START -->
+
+        <!-- Quick View END -->
+    </div>
+</div>
+
+
+<div th:replace="~{admin/fragments/script :: script}"></div>
+
+<script>
+
+
+    document.getElementById('addBlogForm').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+
+    // Lấy tệp ảnh từ trường input
+    const fileInput = document.getElementById('image');
+    const file = fileInput.files[0];
+
+    try {
+        // Tải ảnh lên Cloudinary trước
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const uploadResponse = await fetch('/api/images/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!uploadResponse.ok) {
+            throw new Error('Lỗi khi tải ảnh lên Cloudinary');
+        }
+
+        // Lấy URL ảnh từ Cloudinary (dưới dạng text)
+        const imageUrl = await uploadResponse.text();
+
+        // Tạo đối tượng dữ liệu từ biểu mẫu với URL ảnh từ Cloudinary
+        const userData = {
+            image: imageUrl,
+            title: document.getElementById('title').value,
+            detail: document.getElementById('detail').value,
+            des: document.getElementById('des').value,
+            isActive: document.getElementById('isActive').checked
+        };
+
+        // Gửi yêu cầu POST để thêm mới bài blog với URL ảnh
+        const response = await fetch('/admin/Blog', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+
+        if (response.ok) {
+            window.location.href = '/admin/Blog';
+        } else {
+            document.getElementById('responseMessage').innerHTML = 'Có lỗi xảy ra khi thêm mới người dùng.';
+        }
+    } catch (error) {
+        document.getElementById('responseMessage').innerHTML = 'Lỗi kết nối: ' + error.message;
+    }
+});
+
+
+</script>
+</body>
+
+</html>

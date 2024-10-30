@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{admin/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+    <div class="layout">
+        <div th:replace="~{admin/fragments/header :: header}"> </div>
+        <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+
+
+        <!-- Page Container START -->
+        <div class="page-container">
+
+
+            <!-- Content Wrapper START -->
+            <div class="main-content">
+                <form id="addAccountForm">
+                    <div class="page-header no-gutters has-tab">
+                        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+                            <div id="responseMessage" class="alert alert-danger" ></div>
+
+
+                        </div>
+                    </div>
+                    <div class="tab-content m-t-15">
+                        <div class="tab-pane fade show active" id="product-edit-basic" >
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="accountName"> Tài khoản </label>
+                                        <input type="text" class="form-control" id="accountName" >
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="password">Mật khẩu </label>
+                                        <input type="text" class="form-control" id="password" >
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="role">Quyền </label>
+                                        <select class="form-control" id="role" >
+                                            <!-- Các tùy chọn sẽ được thêm động từ JavaScript -->
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="isActive">
+                                            <label class="form-check-label" for="isActive" >Hoạt động</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="m-b-15 text-right ">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="anticon anticon-save"></i>
+                                            <span>Thêm mới</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+        <!-- Page Container END -->
+
+
+        <!-- Search End-->
+
+        <!-- Quick View START -->
+
+        <!-- Quick View END -->
+    </div>
+</div>
+
+
+<div th:replace="~{admin/fragments/script :: script}"></div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+            fetch('/api/Role') // API để lấy danh sách quyền
+                .then(response => response.json())
+                .then(data => {
+                    let roleDropdown = document.getElementById('role');
+                    data.forEach(role => {
+                        let option = document.createElement('option');
+                        option.value = role.roleId; // Giá trị là roleId
+                        option.text = role.roleName; // Tên quyền
+                        roleDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching roles:', error);
+                });
+                });
+    document.getElementById('addAccountForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+
+        // Lấy dữ liệu từ biểu mẫu
+        const accountData = {
+            accountName: document.getElementById('accountName').value,
+            password: document.getElementById('password').value,
+            role: {
+             roleId: document.getElementById('role').value
+            },
+            isActive: document.getElementById('isActive').checked,
+
+        };
+
+        try {
+            const response = await fetch('/admin/Accounts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(accountData)
+            });
+
+            if (response.ok) {
+                  window.location.href = '/admin/Accounts';
+            } else {
+                document.getElementById('responseMessage').innerHTML = 'Có lỗi xảy ra khi thêm mới người dùng.';
+            }
+        } catch (error) {
+            document.getElementById('responseMessage').innerHTML = 'Lỗi kết nối: ' + error.message;
+        }
+    });
+</script>
+</body>
+
+</html>

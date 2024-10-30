@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{admin/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+  <div class="layout">
+    <div th:replace="~{admin/fragments/header :: header}"> </div>
+    <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+
+
+    <!-- Page Container START -->
+    <div class="page-container">
+      <div class="main-content">
+        <div class="page-header">
+          <h2 class="header-title">Orders </h2>
+          <div class="header-sub-title">
+            <nav class="breadcrumb breadcrumb-dash">
+              <a href="#" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+              <a class="breadcrumb-item" href="#">Apps</a>
+              <a class="breadcrumb-item" href="#">E-commerce</a>
+              <span class="breadcrumb-item active">Orders List</span>
+            </nav>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="row m-b-30">
+
+              <div class="col-lg-4 text-left">
+                <a class="btn btn-primary" href="/admin/Blog/Create">
+                  <i class="anticon anticon-plus-circle m-r-5"></i>
+                  <span style="color: white;">Thêm mới </span>
+                </a>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover e-commerce-table">
+                <thead>
+                <tr>
+
+                  <th>STT</th>
+                  <th>Ảnh</th>
+                  <th>Tiêu đề</th>
+                  <th>Chi tiết </th>
+                  <th>Người đăng </th>
+                  <th>Mô tả thêm </th>
+                  <th>Hoạt động </th>
+
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div th:replace="~{admin/fragments/script :: script}">
+
+</div>
+<script>
+  fetch('/admin/Blog/data')
+    .then(response => response.json())
+    .then(data => {
+      let tableBody = document.querySelector('tbody');
+      tableBody.innerHTML = '';
+      data.forEach((blog, index) => {
+
+        tableBody.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+
+            <td>
+              <div class="d-flex align-items-center">
+                <img class="img-fluid rounded" src="${blog.image}" style="max-width: 60px;" alt="Avatar">
+                <h6 class="m-b-0 m-l-10"></h6>
+              </div>
+            </td>
+            <td>${blog.title}</td>
+            <td>${blog.detail}</td>
+            <td>
+                    ${blog.account ? (blog.account.role.roleId == 1 ? 'Admin' : blog.account.role.roleId == 2 ? 'Quản trị viên' : 'Người tìm việc') : 'Chưa xác định'}
+            </td>
+            <td>${blog.description}</td>
+
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="badge m-r-10 ${blog.isActive ? 'badge-success badge-dot' : 'badge-danger badge-dot'}"></div>
+                <div>${blog.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
+              </div>
+            </td>
+
+            <td class="text-right">
+              <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
+                    onclick="editBlog(${blog.blogId})">
+                <i class="anticon anticon-edit"></i>
+              </a>
+              <button class="btn btn-icon btn-hover btn-sm btn-rounded"
+                      onclick="deleteBlog(${blog.blogId})">
+                <i class="anticon anticon-delete"></i>
+              </button>
+            </td>
+
+          </tr>`;
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+
+    ///
+  function deleteBlog(Id) {
+    if (confirm('Bạn có chắc chắn muốn xóa blog này?')) {
+      fetch(`/admin/Blog/${Id}`, {
+        method: 'DELETE',
+      })
+      .then(response => {
+        if (response.ok) {
+          // Xóa hàng khỏi bảng
+          location.reload(); // Tải lại trang để cập nhật danh sách người dùng
+        } else {
+          alert('Có lỗi xảy ra khi xóa người dùng.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Lỗi kết nối: ' + error.message);
+      });
+    }
+  }
+
+
+
+
+</script>
+
+<script>
+  function editBlog(blogId) {
+   // Chuyển hướng đến trang chỉnh sửa và thêm ID vào URL
+window.location.href = `/admin/Blog/Edit/${blogId}`;
+}
+</script>
+</body>
+
+</html>

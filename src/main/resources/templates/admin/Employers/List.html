@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{admin/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+  <div class="layout">
+    <div th:replace="~{admin/fragments/header :: header}"> </div>
+    <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+
+
+    <!-- Page Container START -->
+    <div class="page-container">
+      <div class="main-content">
+        <div class="page-header">
+          <h2 class="header-title">Orders </h2>
+          <div class="header-sub-title">
+            <nav class="breadcrumb breadcrumb-dash">
+              <a href="#" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+              <a class="breadcrumb-item" href="#">Apps</a>
+              <a class="breadcrumb-item" href="#">E-commerce</a>
+              <span class="breadcrumb-item active">Orders List</span>
+            </nav>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="row m-b-30">
+
+              <div class="col-lg-4 text-left">
+                <a class="btn btn-primary" href="/admin/Employer/Add">
+                  <i class="anticon anticon-plus-circle m-r-5"></i>
+                  <span style="color: white;">Thêm mới </span>
+                </a>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover e-commerce-table">
+                <thead>
+                <tr>
+
+                  <th>STT</th>
+                  <th>Ảnh đại diện</th>
+                  <th>Tên nhà tuyển dụng </th>
+                  <th>Địa chỉ </th>
+                  <th>Link website</th>
+                  <th>Mô tả </th>
+                  <th>Số lượng thành viên</th>
+                  <th>Trạng thái</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="empl, stat : ${list}" >
+
+                  <td th:text="${stat.count}"></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <img class="img-fluid rounded" th:src="@{/assets/images/others/thumb-9.jpg}" style="max-width: 60px" alt="">
+                      <h6 class="m-b-0 m-l-10"> </h6>
+                    </div>
+                  </td>
+                  <td th:text="${empl.employerName}"></td>
+                  <td th:text="${empl.employerAddress}"></td>
+                  <td th:text="${empl.employerWebsite}"></td>
+                  <td th:text="${empl.description}">
+
+                  </td>
+                  <td th:text="${empl.quantity}"></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="badge m-r-10" th:class="${empl.isActive ? 'badge badge-success badge-dot m-r-10' : 'badge badge-danger badge-dot m-r-10'}"></div>
+                      <div th:text="${empl.isActive ? 'Hoạt động' : 'Không hoạt động'}"></div>
+                    </div>
+                  </td>
+                  <td class="text-right">
+                    <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right" th:href="@{/admin/Employer/Edit/{id}(id=${empl.employerId})}">
+                    >
+                      <i class="anticon anticon-edit"></i>
+                    </a>
+                    <a  class="btn btn-icon btn-hover btn-sm btn-rounded"
+                        th:href="@{/admin/Employer/Delete/{id}(id=${empl.employerId})}"
+                        onclick="return confirmDelete();">
+
+                      <i class="anticon anticon-delete"></i>
+                    </a>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div th:replace="~{admin/fragments/script :: script}"></div>
+
+</body>
+
+</html>

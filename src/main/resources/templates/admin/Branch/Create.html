@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{admin/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+  <div class="layout">
+    <div th:replace="~{admin/fragments/header :: header}"> </div>
+    <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+
+    <!-- Page Container START -->
+    <div class="page-container">
+      <!-- Content Wrapper START -->
+      <div class="main-content">
+        <form id="addBranchForm">
+          <div class="page-header no-gutters has-tab">
+            <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+              <h2 class="header-title">Thêm Chi Nhánh Mới</h2>
+            </div>
+          </div>
+          <div class="tab-content m-t-15">
+            <div class="tab-pane fade show active" id="branch-add-basic">
+              <div class="card">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label class="font-weight-semibold" for="branchName">Tên Ngành nghề</label>
+                    <input type="text" class="form-control" id="branchName" required>
+                  </div>
+                  <div class="form-group">
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input" id="isActive">
+                      <label class="form-check-label" for="isActive">Hoạt động</label>
+                    </div>
+                  </div>
+                  <div class="m-b-15 text-right ">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="anticon anticon-save"></i>
+                      <span>Thêm mới</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- Content Wrapper END -->
+    </div>
+    <!-- Page Container END -->
+  </div>
+</div>
+
+<div th:replace="~{admin/fragments/script :: script}"></div>
+
+<script>
+  document.getElementById('addBranchForm').addEventListener('submit', async function(event) {
+      event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+
+      // Lấy dữ liệu từ biểu mẫu
+      const branchData = {
+          branchName: document.getElementById('branchName').value,
+          isActive: document.getElementById('isActive').checked // Lấy giá trị của checkbox
+      };
+
+      try {
+          const response = await fetch('/admin/Branch', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(branchData)
+          });
+
+          if (response.ok) {
+              window.location.href = '/admin/Branch'; // Chuyển hướng đến danh sách chi nhánh
+          } else {
+              alert('Có lỗi xảy ra khi thêm mới chi nhánh.');
+          }
+      } catch (error) {
+          alert('Lỗi kết nối: ' + error.message);
+      }
+  });
+</script>
+</body>
+
+</html>

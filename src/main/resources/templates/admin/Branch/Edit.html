@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{admin/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+  <div class="layout">
+    <div th:replace="~{admin/fragments/header :: header}"> </div>
+    <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+
+    <!-- Page Container START -->
+    <div class="page-container">
+      <!-- Content Wrapper START -->
+      <div class="main-content">
+        <form onsubmit="updateBranch(event)">
+          <div class="page-header no-gutters has-tab">
+            <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+              <h2 class="header-title">Sửa ngành nghề</h2>
+            </div>
+          </div>
+          <div class="tab-content m-t-15">
+            <div class="tab-pane fade show active" id="branch-edit-basic">
+              <div class="card">
+                <div class="card-body">
+                  <input type="hidden" id="branchId" name="branchId" th:value="${branch.branchId}">
+                  <div class="form-group">
+                    <label class="font-weight-semibold" for="branchName">Tên ngành nghề</label>
+                    <input type="text" class="form-control" id="branchName" name="branchName" th:value="${branch.branchName}" required>
+                  </div>
+                  <div class="form-group">
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input" id="isActive" th:checked="${branch.isActive}">
+                      <label class="form-check-label" for="isActive">Hoạt động</label>
+                    </div>
+                  </div>
+
+                  <div class="m-b-15 text-right ">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="anticon anticon-save"></i>
+                      <span>Lưu thay đổi</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- Content Wrapper END -->
+    </div>
+    <!-- Page Container END -->
+  </div>
+</div>
+
+<div th:replace="~{admin/fragments/script :: script}"></div>
+<script>
+  function updateBranch(event) {
+      event.preventDefault(); // Ngăn chặn gửi form mặc định
+
+      const branchId = document.getElementById('branchId').value;
+
+      const branch = {
+          branchId: branchId,
+          branchName: document.getElementById('branchName').value,
+          isActive: document.getElementById('isActive').value === 'true' // Chuyển đổi về kiểu boolean
+      };
+
+      fetch(`/admin/Branch/${branchId}`, {
+          method: 'PUT',
+          body: JSON.stringify(branch),
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      })
+      .then(response => {
+          if (!response.ok) throw new Error('Cập nhật không thành công.');
+          return response.json();
+      })
+      .then(updatedBranch => {
+          alert('Cập nhật thành công!');
+          // Chuyển hướng hoặc thực hiện hành động khác
+          window.location.href = '/admin/Branch'; // Ví dụ chuyển về danh sách chi nhánh
+      })
+      .catch(error => {
+          console.error('Lỗi:', error);
+          alert(error.message);
+      });
+  }
+</script>
+</body>
+
+</html>

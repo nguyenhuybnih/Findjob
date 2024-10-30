@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{admin/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+    <div class="layout">
+        <div th:replace="~{admin/fragments/header :: header}"> </div>
+        <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+
+
+        <!-- Page Container START -->
+        <div class="page-container">
+
+
+            <!-- Content Wrapper START -->
+            <div class="main-content">
+                <form onsubmit="updateUser(event)">
+                    <div class="page-header no-gutters has-tab">
+                        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+
+
+                        </div>
+                    </div>
+                    <div class="tab-content m-t-15">
+                        <div class="tab-pane fade show active" id="product-edit-basic" >
+                            <div class="card">
+                                <div class="card-body">
+                                    <input type="hidden" id="userId" name="userId" th:value="${user.userId}">
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="userAvatar">Ảnh đại diện</label>
+                                        <input type="file" name="file" class="form-control "
+                                               id="userAvatar" value="${user.userAvatar}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="userName">Tên người ứng tuyển </label>
+                                        <input type="text" class="form-control" id="userName" name="userName" th:value="${user.userName}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="userAddress">Địa chỉ</label>
+                                        <input type="text" class="form-control" id="userAddress" th:value="${user.userAddress}"  >
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="userEmail">Email</label>
+                                        <input type="text" class="form-control" id="userEmail" th:value="${user.userEmail}"  >
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="userPhone">Điện thoại </label>
+                                        <input type="text" class="form-control" id="userPhone" th:value="${user.userPhone}"  >
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="description">Mô tả</label>
+                                        <input type="text" class="form-control" id="description" th:value="${user.description}"  >
+                                    </div>
+
+                                    <div class="m-b-15 text-right ">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="anticon anticon-save"></i>
+                                            <span>Lưu thay đổi</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+        <!-- Page Container END -->
+
+
+        <!-- Search End-->
+
+        <!-- Quick View START -->
+
+        <!-- Quick View END -->
+    </div>
+</div>
+
+
+
+<div th:replace="~{admin/fragments/script :: script}"></div>
+<script>
+    function updateUser(event) {
+        event.preventDefault(); // Ngăn chặn gửi form mặc định
+
+        const userId = document.getElementById('userId').value;
+
+        const user = {
+            userId: userId,
+            userName: document.getElementById('userName').value,
+            userAddress: document.getElementById('userAddress').value,
+            userEmail: document.getElementById('userEmail').value,
+            userAvatar: document.getElementById('userAvatar').value,
+            userPhone: document.getElementById('userPhone').value,
+            description: document.getElementById('description').value
+        };
+
+        fetch(`/admin/Users/${userId}`, {
+            method: 'PUT',
+            body: JSON.stringify(user),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Cập nhật không thành công.');
+            return response.json();
+        })
+        .then(updatedUser => {
+            alert('Cập nhật thành công!');
+            // Chuyển hướng hoặc thực hiện hành động khác
+            window.location.href = '/admin/Users'; // Ví dụ chuyển về danh sách người dùng
+        })
+        .catch(error => {
+            console.error('Lỗi:', error);
+            alert(error.message);
+        });
+    }
+</script>
+</body>
+
+</html>

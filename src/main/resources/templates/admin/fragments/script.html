@@ -1,0 +1,42 @@
+<!-- Core Vendors JS -->
+<div th:fragment="script" xmlns:th="http://www.w3.org/1999/xhtml">
+<script th:src="@{/assets/js/vendors.min.js}"></script>
+
+<!-- page js -->
+<script th:src="@{/assets/vendors/chartjs/Chart.min.js}"></script>
+<script th:src="@{/assets/js/pages/dashboard-default.js}"></script>
+<script th:src="@{/assets/js/pages/dashboard-default.js}"></script>
+
+<!-- Core JS -->
+<script th:src="@{/assets/js/app.min.js}"></script>
+    <script>
+        function confirmDelete() {
+            return confirm("Bạn có chắc chắn muốn xóa nhà tuyển dụng này không1?");
+        }
+
+ function uploadImage() {
+    const fileInput = document.getElementById('image');
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text()) // Đọc phản hồi dưới dạng văn bản
+    .then(data => {
+        console.log("Image uploaded to Cloudinary:", data);
+        document.getElementById("imageUrl").src = data; // Hiển thị ảnh tải lên
+    })
+    .catch(error => {
+        console.error("Error uploading image:", error);
+    });
+}
+
+    </script>
+
+
+</div>
+
+
