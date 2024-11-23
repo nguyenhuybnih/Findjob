@@ -15,7 +15,8 @@
     <div class="page-container">
       <!-- Content Wrapper START -->
       <div class="main-content">
-        <form onsubmit="updateBranch(event)">
+        <form  >
+
           <div class="page-header no-gutters has-tab">
             <div class="d-md-flex m-b-15 align-items-center justify-content-between">
               <h2 class="header-title">Sửa ngành nghề</h2>
@@ -25,20 +26,22 @@
             <div class="tab-pane fade show active" id="branch-edit-basic">
               <div class="card">
                 <div class="card-body">
-                  <input type="hidden" id="branchId" name="branchId" th:value="${branch.branchId}">
+                  <input type="hidden" name="branchId" id="branchId" />
+
+
                   <div class="form-group">
                     <label class="font-weight-semibold" for="branchName">Tên ngành nghề</label>
-                    <input type="text" class="form-control" id="branchName" name="branchName" th:value="${branch.branchName}" required>
+                    <input type="text" class="form-control" id="branchName" name="branchName"  >
                   </div>
                   <div class="form-group">
                     <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="isActive" th:checked="${branch.isActive}">
+                      <input type="checkbox" class="form-check-input" id="isActive" >
                       <label class="form-check-label" for="isActive">Hoạt động</label>
                     </div>
                   </div>
 
                   <div class="m-b-15 text-right ">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" onclick="saveBranch()">
                       <i class="anticon anticon-save"></i>
                       <span>Lưu thay đổi</span>
                     </button>
@@ -57,38 +60,60 @@
 
 <div th:replace="~{admin/fragments/script :: script}"></div>
 <script>
-  function updateBranch(event) {
-      event.preventDefault(); // Ngăn chặn gửi form mặc định
+  const pathArray = window.location.pathname.split('/');
+  const branchId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
 
-      const branchId = document.getElementById('branchId').value;
+    function loadBr() {
+    fetch(`/admin/Branch/${branchId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Không tìm thấy acc');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data); // In ra dữ liệu nhận được từ server để kiểm tra
+            document.getElementById("branchName").value = data.branchName || '';
+            document.getElementById("isActive").checked = data.isActive || false;
 
-      const branch = {
-          branchId: branchId,
-          branchName: document.getElementById('branchName').value,
-          isActive: document.getElementById('isActive').value === 'true' // Chuyển đổi về kiểu boolean
-      };
 
-      fetch(`/admin/Branch/${branchId}`, {
-          method: 'PUT',
-          body: JSON.stringify(branch),
-          headers: {
-              'Content-Type': 'application/json',
-          },
-      })
-      .then(response => {
-          if (!response.ok) throw new Error('Cập nhật không thành công.');
-          return response.json();
-      })
-      .then(updatedBranch => {
-          alert('Cập nhật thành công!');
-          // Chuyển hướng hoặc thực hiện hành động khác
-          window.location.href = '/admin/Branch'; // Ví dụ chuyển về danh sách chi nhánh
-      })
-      .catch(error => {
-          console.error('Lỗi:', error);
-          alert(error.message);
-      });
-  }
+        })
+        .catch(error => {
+            console.error('Lỗi:', error); // In ra thông báo lỗi chi tiết
+            document.getElementById("responseMessage").innerText = "Lỗi khi tải tài khoản: " + error.message;
+            document.getElementById("responseMessage").style.display = "block";
+        });
+}
+function saveBranch() {
+    event.preventDefault(); // Chặn hành vi mặc định của form
+
+        const branchData = {
+            branchName: document.getElementById('branchName').value,
+            isActive: document.getElementById("isActive").checked,
+        };
+
+        fetch(`/admin/Branch/${branchId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(branchData),
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Cập nhật thành công!");
+                window.location.href = '/admin/Branch'; // Ví dụ chuyển về danh sách chi nhánh
+
+            } else {
+                alert("Cập nhật thất bại!");
+            }
+        })
+        .catch(error => {
+            document.getElementById("responseMessage").innerText = "Lỗi khi cập nhật : " + error.message;
+            document.getElementById("responseMessage").style.display = "block";
+        });
+    }
+      loadBr();
 </script>
 </body>
 

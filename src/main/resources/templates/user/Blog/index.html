@@ -46,53 +46,11 @@
 
   <section class="site-section">
     <div class="container">
-      <div class="row mb-5">
-        <div class="col-md-6 col-lg-4 mb-5">
-          <a href="blog-single.html"><img src="images/sq_img_1.jpg" alt="Image" class="img-fluid rounded mb-4"></a>
-          <h3><a href="blog-single.html" class="text-black">7 Factors for Choosing Between Two Jobs</a></h3>
-          <div>April 15, 2019 <span class="mx-2">|</span> <a href="#">2 Comments</a></div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <a href="blog-single.html"><img src="images/sq_img_2.jpg" alt="Image" class="img-fluid rounded mb-4"></a>
-          <h3><a href="blog-single.html" class="text-black">How to Write a Creative Cover Letter</a></h3>
-          <div>April 15, 2019 <span class="mx-2">|</span> <a href="#">2 Comments</a></div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <a href="blog-single.html"><img src="images/sq_img_4.jpg" alt="Image" class="img-fluid rounded mb-4"></a>
-          <h3><a href="blog-single.html" class="text-black">The Right Way to Quit a Job You Started</a></h3>
-          <div>April 15, 2019 <span class="mx-2">|</span> <a href="#">2 Comments</a></div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <a href="blog-single.html"><img src="images/sq_img_7.jpg" alt="Image" class="img-fluid rounded mb-4"></a>
-          <h3><a href="blog-single.html" class="text-black">7 Factors for Choosing Between Two Jobs</a></h3>
-          <div>April 15, 2019 <span class="mx-2">|</span> <a href="#">2 Comments</a></div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <a href="blog-single.html"><img src="images/sq_img_5.jpg" alt="Image" class="img-fluid rounded mb-4"></a>
-          <h3><a href="blog-single.html" class="text-black">How to Write a Creative Cover Letter</a></h3>
-          <div>April 15, 2019 <span class="mx-2">|</span> <a href="#">2 Comments</a></div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <a href="blog-single.html"><img src="images/sq_img_6.jpg" alt="Image" class="img-fluid rounded mb-4"></a>
-          <h3><a href="blog-single.html" class="text-black">The Right Way to Quit a Job You Started</a></h3>
-          <div>April 15, 2019 <span class="mx-2">|</span> <a href="#">2 Comments</a></div>
-        </div>
-      </div>
-      <div class="row pagination-wrap mt-5">
+      <div class="row mb-5" id="blog-list">
 
-        <div class="col-md-12 text-center ">
-          <div class="custom-pagination ml-auto">
-            <a href="#" class="prev">Prev</a>
-            <div class="d-inline-block">
-              <a href="#" class="active">1</a>
-              <a href="#">2</a>
-              <a href="#">3</a>
-              <a href="#">4</a>
-            </div>
-            <a href="#" class="next">Next</a>
-          </div>
-        </div>
+
       </div>
+
 
     </div>
   </section>
@@ -104,6 +62,46 @@
 
 <!-- SCRIPTS -->
 <div th:replace="~{/user/fragments/script :: script}"></div>
+
+
+<script>
+
+    // Sử dụng axios để lấy dữ liệu công việc từ API
+    axios.get('/admin/Blog/data')
+        .then(response => {
+            const blogList = document.getElementById("blog-list");
+
+            // Duyệt qua từng công việc và tạo nội dung HTML
+            response.data.forEach(blog => {
+                const blogItem = `
+            <div class="col-md-6 col-lg-4 mb-5">
+              <a onclick="detailsBlog(${blog.blogId})">
+                <img style="width: 120%; height: 250px; object-fit: cover;"src="${blog.image}" alt="Image" class="img-fluid rounded mb-4">
+              </a>
+              <h4><a href="/Blog-detail/${blog.blogId}" class="text-black">${blog.title}</a></h4>
+              <div>
+                ${blog.createdDate}
+                  <span class="mx-2">|
+                  </span>
+                    <a href="#">
+                    2 Comments
+                    </a>
+              </div>
+            </div>
+                `;
+                blogList.insertAdjacentHTML('beforeend', blogItem);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching job data:", error);
+        });
+
+
+  function detailsBlog(blogId) {
+      window.location.href = `/Blog-detail/${blogId}`; // Ví dụ cách điều hướng
+  }
+
+</script>
 
 </body>
 </html>

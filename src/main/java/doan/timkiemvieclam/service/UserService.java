@@ -43,7 +43,7 @@ public class UserService {
         users.setUserAvatar(usersDetails.getUserAvatar());
         users.setUserPhone(usersDetails.getUserPhone());
         users.setDescription(usersDetails.getDescription());
-        users.setAccountId(usersDetails.getAccountId());
+        users.setAccount(usersDetails.getAccount());
 
 
         return usersRepository.save(users);

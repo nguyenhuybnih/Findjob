@@ -46,7 +46,6 @@ public class EmployerService {
 
         return employerRepository.save(employer);
     }
-
     // Xóa nhà tuyển dụng theo ID
     public void deleteEmployerById(Integer id) {
         employerRepository.deleteById(id);

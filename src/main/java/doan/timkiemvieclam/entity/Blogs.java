@@ -1,9 +1,12 @@
 package doan.timkiemvieclam.entity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -30,6 +33,14 @@ public class Blogs {
 
     private Boolean isActive;
 
+    @Column(updatable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate createdDate;
+
+    @PrePersist //Tự động gán ngày hiện tại khi tạo mới một bản ghi.
+    protected void onCreate() {
+        this.createdDate = LocalDate.now(); // Gán ngày hiện tại theo định dạng năm - tháng ngày
+    }
 
 
 }

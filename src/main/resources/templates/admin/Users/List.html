@@ -79,7 +79,7 @@
             <td>${index + 1}</td>
             <td>
               <div class="d-flex align-items-center">
-                <img class="img-fluid rounded" src="/assets/images/others/thumb-9.jpg" style="max-width: 60px;" alt="Avatar">
+                <img class="img-fluid rounded" src="${user.userAvatar}" style="max-width: 60px;" alt="Avatar">
                 <h6 class="m-b-0 m-l-10"></h6>
               </div>
             </td>
@@ -91,7 +91,7 @@
             <td>${user.description}</td>
             <td class="text-right">
               <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
-                    href="/admin/Users/edit?id=${user.userId}">
+                      onclick="updateUser(${user.userId})">
                 <i class="anticon anticon-edit"></i>
               </a>
               <button class="btn btn-icon btn-hover btn-sm btn-rounded"
@@ -125,6 +125,9 @@
         alert('Lỗi kết nối1111: ' + error.message);
       });
     }
+  }
+  function updateUser(userId) {
+      window.location.href = `/admin/Users/Edit/${userId}`;
   }
 </script>
 

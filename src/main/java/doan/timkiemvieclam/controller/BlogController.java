@@ -1,6 +1,5 @@
 package doan.timkiemvieclam.controller;
 
-import doan.timkiemvieclam.entity.Accounts;
 import doan.timkiemvieclam.entity.Blogs;
 import doan.timkiemvieclam.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,9 @@ public class BlogController {
     public String showBlog() {
         return "admin/Blogs/List";
     }
+
     @GetMapping("/data")
+
     @ResponseBody
     public List<Blogs> getAllBlog(){
         return BlogServices.getAllBlogs();
@@ -36,28 +37,18 @@ public class BlogController {
         return "admin/Blogs/Create";
     }
 
-
-
     @PostMapping
     public ResponseEntity<Blogs> addBlog(@RequestBody Blogs blog) {
         Blogs newblog = BlogServices.saveBlog(blog);// Lưu blog
         return ResponseEntity.status(HttpStatus.CREATED).body(newblog);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBlog(@PathVariable Integer id) {
-        try {
-            BlogServices.deleteBlogById(id);
-            return ResponseEntity.noContent().build(); // Trả về 204 No Content
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
-        }
-    }
     @GetMapping("/Edit/{id}")
     public String editBlogPage(@PathVariable("id") Integer blogId) {
         // Trả về trang chỉnh sửa
         return "admin/Blogs/Edit"; // Tên của trang HTML
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Blogs> getBlogById(@PathVariable Integer id) {
         Optional<Blogs> blogOptional = BlogServices.getBlogById(id);
@@ -79,6 +70,15 @@ public class BlogController {
         return ResponseEntity.notFound().build();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBlog(@PathVariable Integer id) {
+        try {
+            BlogServices.deleteBlogById(id);
+            return ResponseEntity.noContent().build(); // Trả về 204 No Content
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
+        }
+    }
 
 
 }

@@ -32,5 +32,5 @@ public class users {
 
     @OneToOne
     @JoinColumn(name = "accountId")
-    private Accounts accountId;
+    private Accounts account;
 }

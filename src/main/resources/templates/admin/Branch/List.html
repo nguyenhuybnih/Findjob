@@ -27,7 +27,7 @@
           <div class="card-body">
             <div class="row m-b-30">
               <div class="col-lg-4 text-left">
-                <a class="btn btn-primary" href="/admin/Branch/create">
+                <a class="btn btn-primary" href="/admin/Branch/Create">
                   <i class="anticon anticon-plus-circle m-r-5"></i>
                   <span style="color: white;">Thêm mới</span>
                 </a>
@@ -58,41 +58,42 @@
 
 </div>
 <script>
-  fetch('/admin/Branch/data')
-    .then(response => response.json())
-    .then(data => {
-      let tableBody = document.querySelector('tbody');
-      tableBody.innerHTML = '';
-      data.forEach((branch, index) => {
-        tableBody.innerHTML += `
-          <tr>
-            <td>${index + 1}</td>
-            <td>${branch.branchName}</td>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="badge m-r-10 ${branch.isActive ? 'badge-success badge-dot' : 'badge-danger badge-dot'}"></div>
-                <div>${branch.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
-              </div>
-            </td>
-            <td class="text-right">
-              <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
-                 onclick="editBranch(${branch.branchId})">
-                <i class="anticon anticon-edit"></i>
-              </a>
-              <button class="btn btn-icon btn-hover btn-sm btn-rounded"
-                      onclick="deleteBranch(${branch.branchId})">
-                <i class="anticon anticon-delete"></i>
-              </button>
-            </td>
-          </tr>`;
-      });
+  axios.get('/admin/Branch/data')
+    .then(response => {
+        let data = response.data; // Lấy dữ liệu từ phản hồi
+        let tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = ''; // Xóa nội dung cũ trong bảng
+        data.forEach((branch, index) => {
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${index + 2}</td>
+                    <td>${branch.branchName}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="badge m-r-10 ${branch.isActive ? 'badge-success badge-dot' : 'badge-danger badge-dot'}"></div>
+                            <div>${branch.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
+                           onclick="editBranch(${branch.branchId})">
+                            <i class="anticon anticon-edit"></i>
+                        </a>
+                        <button class="btn btn-icon btn-hover btn-sm btn-rounded"
+                                onclick="deleteBranch(${branch.branchId})">
+                            <i class="anticon anticon-delete"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
     })
     .catch(error => {
-      console.error('Error:', error);
+        console.error('Error:', error);
     });
 
+
   function editBranch(branchId) {
-    window.location.href = `/admin/Branch/edit?id=${branchId}`; // Chuyển hướng đến trang chỉnh sửa
+    window.location.href = `/admin/Branch/Edit/${branchId}`; // Chuyển hướng đến trang chỉnh sửa
   }
 
   function deleteBranch(branchId) {

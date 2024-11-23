@@ -1,10 +1,162 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="~{/user/fragments/head :: head(pageTitle='Blog Tìm kiếm việc làm')}">
+
 </head>
-<body>
-$END$
+<body id="top">
+
+<div id="overlayer"></div>
+<div class="loader">
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+
+</div>
+
+<div class="site-wrap">
+  <div class="site-mobile-menu site-navbar-target">
+    <div class="site-mobile-menu-header">
+      <div class="site-mobile-menu-close mt-3">
+        <span class="icon-close2 js-menu-toggle"></span>
+      </div>
+    </div>
+    <div class="site-mobile-menu-body"></div>
+  </div> <!-- .site-mobile-menu -->
+
+
+  <!-- NAVBAR -->
+  <div th:replace="~{/user/fragments/navbar :: navbar}"> </div>
+
+  <!-- HOME -->
+<div id="home-id">
+  <section class="section-hero overlay inner-page bg-image" style="background-image: url('/assets1/images/hero_1.jpg');" id="home-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="custom-breadcrumbs mb-0">
+            <span class="slash">Posted by</span> Admin</a>
+            <span class="mx-2 slash">&bullet;</span>
+            <span class="text-white" id="createdDate"><strong></strong></span>
+          </div>
+          <h1 class="text-white" id="title"></h1>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section" id="next-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 blog-content">
+          <img id="img" alt="Image" src="" class="img-fluid rounded mb-4">
+          <div id="detail" class="mt-4"></div>
+
+          <div class="pt-5">
+            <h3 class="mb-5">6 Comments</h3>
+            <ul class="comment-list">
+
+
+              <li class="comment">
+                <div class="vcard bio">
+                  <img src="/assets1/images/person_3.jpg" alt="Image placeholder">
+                </div>
+
+                <div class="comment-body">
+                  <h3>Chris Meyer</h3>
+                  <div class="meta">January 9, 2018 at 2:21pm</div>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia,
+                    fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?
+                  </p>
+                  <p><a href="#" class="reply">Reply</a></p>
+                </div>
+
+                <ul class="children">
+                  <li class="comment">
+                    <div class="vcard bio">
+
+                      <img src="/assets1/images/person_5.jpg" alt="Image placeholder">
+                    </div>
+                    <div class="comment-body">
+                      <h3>Chintan Patel</h3>
+                      <div class="meta">January 9, 2018 at 2:21pm</div>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
+                      <p><a href="#" class="reply">Reply</a></p>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <!-- END comment-list -->
+
+            <div class="comment-form-wrap pt-5">
+              <h3 class="mb-5">Leave a comment</h3>
+              <form action="#" class="">
+                <div class="form-group">
+                  <label for="message">Message</label>
+                  <textarea name="" id="message" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                  <input type="submit" value="Post Comment" class="btn btn-primary btn-md">
+                </div>
+
+              </form>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4 sidebar pl-lg-5">
+
+          <div class="sidebar-box">
+            <div class="categories">
+              <h3>Categories</h3>
+              <li><a href="#">Creatives <span>(12)</span></a></li>
+              <li><a href="#">News <span>(22)</span></a></li>
+              <li><a href="#">Design <span>(37)</span></a></li>
+              <li><a href="#">HTML <span>(42)</span></a></li>
+              <li><a href="#">Web Development <span>(14)</span></a></li>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+<footer th:replace="~{/user/fragments/footer :: footer}"></footer>
+</div>
+
+<div th:replace="~{/user/fragments/script :: script}"></div>
+
+<script >
+  const pathArray = window.location.pathname.split('/');
+        const blogId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
+        function loadBlog() {
+        fetch(`/admin/Blog/${blogId}`)
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Không tìm thấy blog');
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 // Cập nhật các trường khác
+                 document.getElementById("title").innerText  = data.title || '';
+                 document.getElementById("createdDate").innerText  = data.createdDate || '';
+                 document.getElementById("detail").innerHTML = data.detail || '';
+                 document.getElementById("img").src  = data.image || '';
+
+
+             })
+             .catch(error => {
+                 console.log("loio")
+                 document.getElementById("responseMessage").style.display = "block";
+             });
+         }
+  loadBlog();
+
+</script>
 </body>
 </html>

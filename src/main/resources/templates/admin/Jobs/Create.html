@@ -18,7 +18,7 @@
 
             <!-- Content Wrapper START -->
             <div class="main-content">
-                <form id="addAccountForm">
+                <form id="addJobForm">
                     <div class="page-header no-gutters has-tab">
                         <div class="d-md-flex m-b-15 align-items-center justify-content-between">
                             <div id="responseMessage" class="alert alert-danger" style="display :none;"  ></div>
@@ -30,38 +30,43 @@
                         <div class="tab-pane fade show active" id="product-edit-basic" >
                             <div class="card">
                                 <div class="card-body">
+                                    <input type="hidden" name="jobId" id="jobId" />
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="branch">Ngành nghề </label>
+                                        <select class="form-control" id="branch" >
 
-                                    <div class="form-group">
-                                        <label class="font-weight-semibold" for="accountName"> Tài khoản </label>
-                                        <input type="text" class="form-control" id="accountName" >
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="font-weight-semibold" for="password">Mật khẩu </label>
-                                        <input type="password" class="form-control" id="password" >
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="showPasswordCheckbox">
-                                            <label class="form-check-label" for="showPasswordCheckbox" >Hiện mật khẩu</label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="font-weight-semibold" for="role">Quyền </label>
-                                        <select class="form-control" id="role" >
-                                            <!-- Các tùy chọn sẽ được thêm động từ JavaScript -->
                                         </select>
                                     </div>
                                     <div class="form-group">
+                                        <label class="font-weight-semibold" for="jobName"> Tên công việc  </label>
+                                        <input type="text" class="form-control" id="jobName" >
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="jobDetails">Chi tiết tuyển dụng </label>
+                                        <textarea name="jobDetails" id="jobDetails" class="form-control"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="jobAddress">Địa điểm làm việc  </label>
+                                        <input type="text" class="form-control" id="jobAddress" >
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="Salary">Lương</label>
+                                        <input type="text" class="form-control" id="Salary" required>
+                                    </div>
+
+                                    <div class="form-group">
                                         <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="isActive">
-                                            <label class="form-check-label" for="isActive" >Hoạt động</label>
+                                            <input type="checkbox" class="form-check-input" id="isActive" checked >
+                                            <label class="form-check-label" for="isActive">Hoạt động</label>
                                         </div>
                                     </div>
 
                                     <div class="m-b-15 text-right ">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="anticon anticon-save"></i>
-                                            <span>Thêm mới</span>
+                                            <span>Lưu </span>
                                         </button>
                                     </div>
                                 </div>
@@ -70,6 +75,7 @@
 
                     </div>
                 </form>
+
             </div>
 
 
@@ -90,69 +96,91 @@
 
 <script>
 
-    document.addEventListener("DOMContentLoaded", function() {
-    const passwordInput = document.getElementById('password');
-        const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
-
-        // Lắng nghe sự kiện click của checkbox
-        showPasswordCheckbox.addEventListener('change', function() {
-            // Kiểm tra trạng thái của checkbox
-            if (showPasswordCheckbox.checked) {
-                passwordInput.type = 'text'; // Hiển thị mật khẩu
-            } else {
-                passwordInput.type = 'password'; // Ẩn mật khẩu
+    ClassicEditor
+    .create(document.querySelector('#jobDetails'), {
+        ckfinder: {
+            uploadUrl: '/api/images/upload',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Giúp Spring Boot nhận diện đây là yêu cầu AJAX
             }
-        });
-            fetch('/api/Role') // API để lấy danh sách quyền
+        }
+    })
+    .then(editor => {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return {
+                upload: () => loader.file
+                    .then(file => {
+                        const formData = new FormData();
+                        formData.append('file', file);
+
+                        return fetch('/api/images/upload', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.text())  // Đọc phản hồi dưới dạng văn bản
+                        .then(url => {
+                            // Đảm bảo rằng phản hồi là URL hợp lệ
+                            if (!url.startsWith('http')) {
+                                throw new Error('Invalid response from server');
+                            }
+                            return { default: url };  // Trả về URL cho CKEditor
+                        });
+                    })
+            };
+        };
+    })
+    .catch(error => {
+        console.error('Error initializing CKEditor:', error);
+    });
+
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+           fetch('/admin/Branch/data') // API để lấy danh sách quyền
                 .then(response => response.json())
                 .then(data => {
-                    let roleDropdown = document.getElementById('role');
-                    data.forEach(role => {
+                    let branchropdown = document.getElementById('branch');
+                    data.forEach(branch => {
                         let option = document.createElement('option');
-                        option.value = role.roleId; // Giá trị là roleId
-                        option.text = role.roleName; // Tên quyền
-                        roleDropdown.appendChild(option);
+                        option.value = branch.branchId; // Giá trị là roleId
+                        option.text = branch.branchName; // Tên quyền
+                        branchropdown.appendChild(option);
                     });
+
                 })
                 .catch(error => {
-                    console.error('Error fetching roles:', error);
+                    console.error('Error fetching branch:', error);
                 });
-                });
-    document.getElementById('addAccountForm').addEventListener('submit', async function(event) {
+           });
+    document.getElementById('addJobForm').addEventListener('submit', async function(event) {
         event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
 
-        // Lấy dữ liệu từ biểu mẫu
-            const accountName = document.getElementById('accountName').value.trim();
-            const password = document.getElementById('password').value.trim();
-        if (!accountName || !password) {
-            document.getElementById('responseMessage').innerHTML = 'Vui lòng nhập đầy đủ thông tin tài khoản và mật khẩu.';
-            document.getElementById('responseMessage').style.display = 'block'; // Hiển thị thông báo
-            return;
-
-        }
-        const accountData = {
-            accountName: accountName,
-            password: password,
-            role: {
-             roleId: document.getElementById('role').value
+        const jobData = {
+            jobName: document.getElementById('jobName').value.trim(),
+            jobDetails: document.getElementById('jobDetails').value.trim(),
+            jobAddress: document.getElementById('jobAddress').value,
+            branch: {
+             branchId: document.getElementById('branch').value
             },
+            Salary: document.getElementById('Salary').value,
             isActive: document.getElementById('isActive').checked,
 
         };
 
         try {
-            const response = await fetch('/admin/Accounts', {
+            const response = await fetch('/admin/Jobs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(accountData)
+                body: JSON.stringify(jobData)
             });
 
             if (response.ok) {
-                  window.location.href = '/admin/Accounts';
+                  window.location.href = '/admin/Jobs';
             } else {
-                document.getElementById('responseMessage').innerHTML = 'Có lỗi xảy ra khi thêm mới người dùng.';
+                console.log("co loi")
+                document.getElementById('responseMessage').innerHTML = 'Có lỗi xảy ra khi thêm mới ';
             }
         } catch (error) {
             document.getElementById('responseMessage').innerHTML = 'Lỗi kết nối: ' + error.message;

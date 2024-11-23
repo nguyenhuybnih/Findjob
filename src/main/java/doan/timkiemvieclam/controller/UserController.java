@@ -1,4 +1,5 @@
 package doan.timkiemvieclam.controller;
+import doan.timkiemvieclam.entity.Blogs;
 import doan.timkiemvieclam.entity.Employersq;
 import doan.timkiemvieclam.entity.users;
 import doan.timkiemvieclam.service.EmployerService;
@@ -37,31 +38,25 @@ public class UserController {
         return "admin/Users/Create";
     }
 
-
-    //them moi
     @PostMapping
     public ResponseEntity<users> addUser(@RequestBody users user) {
         users newUser = UserService.saveUsers(user); // Lưu người dùng mới
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser); // Trả về người dùng mới với mã 201
     }
 
-//    //lay ra id nguoi dung
-//    @GetMapping("/{id}")
-//    public ResponseEntity<users> getUserById(@PathVariable Integer id) {
-//        Optional<users> users = UserService.getUsersById(id);
-//
-//        users user = users.get();
-//
-//        return ResponseEntity.ok(user);
-//    }
-    @GetMapping("/edit")
-    public String editUser(@RequestParam Integer id, Model model) {
-        Optional<users> userOpt = UserService.getUsersById(id);
-        if (userOpt.isPresent()) {
-            model.addAttribute("user", userOpt.get());
-            return "admin/Users/Edit"; // Tên của trang HTML để sửa
+    @GetMapping("/Edit/{id}")
+    public String editUser(@PathVariable("id") Integer id) {
+        return "admin/Users/Edit"; // Tên của trang HTML
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<users> getUserById(@PathVariable Integer id) {
+        Optional<users> usersOptional = UserService.getUsersById(id);
+        if (usersOptional.isPresent()) {
+            return ResponseEntity.ok(usersOptional.get()); // Trả về 200 OK cùng với thông tin blog
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
         }
-        return "redirect:/admin/Users"; // Chuyển hướng nếu không tìm thấy người dùng
     }
 
     @PutMapping("/{id}")
@@ -75,11 +70,8 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-
-
-    //xoa
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployer(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         try {
             UserService.deleteUsersById(id);
             return ResponseEntity.noContent().build(); // Trả về 204 No Content

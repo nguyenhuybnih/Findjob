@@ -30,10 +30,10 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label class="font-weight-semibold" for="userAvatar">Ảnh đại diện</label>
-                                        <input type="file" name="file" class="form-control "
-                                               id="userAvatar">
+                                        <input type="file" id="userAvatar" onchange="uploadImage()">
+                                        <img id="imageUrl" alt="Uploaded Image" style="width: 150px; height: 150px;">
                                     </div>
+
                                     <div class="form-group">
                                         <label class="font-weight-semibold" for="userName">Tên người ứng tuyển </label>
                                         <input type="text" class="form-control" id="userName" >
@@ -86,37 +86,73 @@
 <div th:replace="~{admin/fragments/script :: script}"></div>
 
 <script>
+    function uploadImage() {
+    const fileInput = document.getElementById('userAvatar');
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text()) // Đọc phản hồi dưới dạng văn bản
+    .then(data => {
+        console.log("Image uploaded to Cloudinary:", data);
+        document.getElementById("imageUrl").src = data; // Hiển thị ảnh tải lên
+    })
+    .catch(error => {
+        console.error("Error uploading image:", error);
+    });
+}
     document.getElementById('addUserForm').addEventListener('submit', async function(event) {
         event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
-
-        // Lấy dữ liệu từ biểu mẫu
-        const userData = {
-            userAvatar: document.getElementById('userAvatar').value,
-            userName: document.getElementById('userName').value,
-            userEmail: document.getElementById('userEmail').value,
-            userAddress: document.getElementById('userAddress').value,
-            userPhone: document.getElementById('userPhone').value,
-            description: document.getElementById('description').value
-        };
-
+        const fileInput = document.getElementById('userAvatar');
+        const file = fileInput.files[0];
         try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const uploadResponse = await fetch('/api/images/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadResponse.ok) {
+                throw new Error('Lỗi khi tải ảnh lên Cloudinary');
+            }
+
+            // Lấy URL ảnh từ Cloudinary (dưới dạng text)
+            const imageUrl = await uploadResponse.text();
+
+            // Lấy dữ liệu từ biểu mẫu
+            const userData = {
+                userAvatar: imageUrl,
+                userName: document.getElementById('userName').value,
+                userEmail: document.getElementById('userEmail').value,
+                userAddress: document.getElementById('userAddress').value,
+                userPhone: document.getElementById('userPhone').value,
+                description: document.getElementById('description').value
+            };
             const response = await fetch('/admin/Users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                    body: JSON.stringify(userData)
             });
 
             if (response.ok) {
-                  window.location.href = '/admin/Users';
-            } else {
+                window.location.href = '/admin/Users';
+            }else
+            {
                 document.getElementById('responseMessage').innerHTML = 'Có lỗi xảy ra khi thêm mới người dùng.';
             }
-        } catch (error) {
+        }
+        catch (error)
+        {
             document.getElementById('responseMessage').innerHTML = 'Lỗi kết nối: ' + error.message;
         }
-    });
+        });
 </script>
 </body>
 

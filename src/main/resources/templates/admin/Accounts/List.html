@@ -77,7 +77,7 @@
             <td>${index + 1}</td>
             <td>${acc.accountName}</td>
             <td>
-                    ${acc.role ? (acc.role.roleId == 1 ? 'Admin' : acc.role.roleId == 2 ? 'Nhà tuyển dụng' : 'Người tìm việc') : 'Chưa xác định'}
+                    ${acc.role.roleName}
             </td>
 
             <td>
@@ -86,6 +86,7 @@
                 <div>${acc.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
               </div>
             </td>
+
             <td class="text-right">
               <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
                     onclick="editAccount(${acc.accountId})">
@@ -124,7 +125,9 @@
     }
   }
 
-
+function editAccount(accountId) {
+window.location.href = `/admin/Accounts/Edit/${accountId}`;
+}
 
 </script>
 </body>

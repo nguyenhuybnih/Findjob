@@ -3,9 +3,14 @@ package doan.timkiemvieclam.service;
 import doan.timkiemvieclam.entity.Blogs;
 import doan.timkiemvieclam.repository.BlogRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +21,26 @@ public class BlogService {
     private BlogRepository blogRepository;
 
     public List<Blogs> getAllBlogs() {
-        return blogRepository.findAll();
+
+        List<Blogs> blog = blogRepository.findAll();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        blog.forEach(blogs -> {
+            String blogDetails = blogs.getDetail();
+            if (blogDetails != null) {
+                // Lấy text từ HTML và rút gọn chuỗi
+                String plainText = Jsoup.parse(blogDetails).text(); // Loại bỏ thẻ HTML
+                if (plainText.length() > 20) {
+                    plainText = plainText.substring(0, 20) + "...";
+                }
+                // Đưa nội dung rút gọn quay lại dạng HTML đơn giản
+                String truncatedHtml = Jsoup.clean(plainText, Safelist.basic());
+                blogs.setDetail(truncatedHtml);
+            }
+
+        });
+
+        return blog;
     }
 
     public Optional<Blogs> getBlogById(Integer id) {

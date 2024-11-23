@@ -31,7 +31,7 @@
             <div class="row m-b-30">
 
               <div class="col-lg-4 text-left">
-                <a class="btn btn-primary" href="/admin/Employer/Add">
+                <a class="btn btn-primary" href="/admin/Employer/Create">
                   <i class="anticon anticon-plus-circle m-r-5"></i>
                   <span style="color: white;">Thêm mới </span>
                 </a>
@@ -53,41 +53,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="empl, stat : ${list}" >
-
-                  <td th:text="${stat.count}"></td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <img class="img-fluid rounded" th:src="@{/assets/images/others/thumb-9.jpg}" style="max-width: 60px" alt="">
-                      <h6 class="m-b-0 m-l-10"> </h6>
-                    </div>
-                  </td>
-                  <td th:text="${empl.employerName}"></td>
-                  <td th:text="${empl.employerAddress}"></td>
-                  <td th:text="${empl.employerWebsite}"></td>
-                  <td th:text="${empl.description}">
-
-                  </td>
-                  <td th:text="${empl.quantity}"></td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <div class="badge m-r-10" th:class="${empl.isActive ? 'badge badge-success badge-dot m-r-10' : 'badge badge-danger badge-dot m-r-10'}"></div>
-                      <div th:text="${empl.isActive ? 'Hoạt động' : 'Không hoạt động'}"></div>
-                    </div>
-                  </td>
-                  <td class="text-right">
-                    <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right" th:href="@{/admin/Employer/Edit/{id}(id=${empl.employerId})}">
-                    >
-                      <i class="anticon anticon-edit"></i>
-                    </a>
-                    <a  class="btn btn-icon btn-hover btn-sm btn-rounded"
-                        th:href="@{/admin/Employer/Delete/{id}(id=${empl.employerId})}"
-                        onclick="return confirmDelete();">
-
-                      <i class="anticon anticon-delete"></i>
-                    </a>
-                  </td>
-                </tr>
                 </tbody>
               </table>
             </div>
@@ -102,5 +67,75 @@
 <div th:replace="~{admin/fragments/script :: script}"></div>
 
 </body>
+<script>
+  fetch('/admin/Employer/data')
+    .then(response => response.json())
+      .then(data => {
+        let tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = '';
+        data.forEach((empl, index) => {
+          tableBody.innerHTML += `
+            <tr>
+              <td> ${index + 1} </td>
+              <td>
+              <div class="d-flex align-items-center">
+                <img class="img-fluid rounded" src="${empl.employerAvatar}" style="max-width: 60px;" alt="Avatar">
+                <h6 class="m-b-0 m-l-10"></h6>
+              </div>
+              </td>
+              <td> ${empl.employerName}</td>
+              <td> ${empl.employerAddress}</td>
+              <td> ${empl.employerWebsite}</td>
+              <td> ${empl.description} </td>
+              <td> ${empl.quantity} </td>
+              <td>
+              <div class="d-flex align-items-center">
+                <div class="badge m-r-10 ${empl.isActive ? 'badge-success badge-dot' : 'badge-danger badge-dot'}"></div>
+                <div>${empl.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
+              </div>
+              </td>
+              <td class="text-right">
+                <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
+                      onclick="editEm(${empl.employerId})">
+                  <i class="anticon anticon-edit"></i>
+                </a>
+                <button class="btn btn-icon btn-hover btn-sm btn-rounded"
+                        onclick="deleteEm(${empl.employerId})">
+                  <i class="anticon anticon-delete"></i>
+                </button>
+              </td>
+            </tr>`;
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
 
+    ///
+  function deleteEm(employerId) {
+    if (confirm('Bạn có chắc chắn muốn xóa blog này?')) {
+      fetch(`/admin/Employer/${employerId}`, {
+        method: 'DELETE',
+      })
+      .then(response => {
+        if (response.ok) {
+          // Xóa hàng khỏi bảng
+          location.reload(); // Tải lại trang để cập nhật danh sách người dùng
+        } else {
+          alert('Có lỗi xảy ra khi xóa người dùng.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Lỗi kết nối: ' + error.message);
+      });
+    }
+  }
+   function editEm(employerId) {
+      window.location.href = `/admin/Employer/Edit/${employerId}`; // Ví dụ cách điều hướng
+  }
+
+
+
+</script>
 </html>

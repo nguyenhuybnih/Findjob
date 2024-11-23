@@ -22,13 +22,15 @@ public class AccountController {
     @Autowired
     private AccountService AccountService;
 
-    @GetMapping
+
+    @GetMapping()
     public String showAcounntList() {
         return "admin/Accounts/List";
     }
 
     @GetMapping("/data")
     @ResponseBody
+
     public List<Accounts> getAllUser() {
         return AccountService.getAllAccounts();
     }
@@ -45,16 +47,24 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newAccount); // Trả về người dùng mới với mã 201
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Accounts> getAccountById(@PathVariable Integer id) {
-        return AccountService.getAccountsById(id)
-                .map(accounts -> ResponseEntity.ok().body(accounts))
-                .orElse(ResponseEntity.notFound().build());
+
+    @GetMapping("/Edit/{id}")
+    public String editAccounts(@PathVariable("id") Integer accountId) {
+        return "admin/Accounts/Edit"; // Đảm bảo rằng đường dẫn này chính xác
     }
 
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Accounts> getAccById(@PathVariable Integer id) {
+        Optional<Accounts> accOptional = AccountService.getAccountsById(id);
+        if (accOptional.isPresent()) {
+            return ResponseEntity.ok(accOptional.get()); // Trả về 200 OK cùng với thông tin blog
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
+        }
+    }
     @PutMapping("/{id}")
-    public ResponseEntity<Accounts> updateUser(@PathVariable Integer id, @RequestBody Accounts accounts) {
+    public ResponseEntity<Accounts> updateAcc(@PathVariable Integer id, @RequestBody Accounts accounts) {
         Optional<Accounts> existingAcc = AccountService.getAccountsById(id);
         if (existingAcc.isPresent()) {
             accounts.setAccountId(id);
@@ -63,6 +73,7 @@ public class AccountController {
         }
         return ResponseEntity.notFound().build();
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAcc(@PathVariable Integer id) {

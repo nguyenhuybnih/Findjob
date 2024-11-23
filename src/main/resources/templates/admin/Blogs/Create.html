@@ -37,9 +37,10 @@
                                         <input type="text" class="form-control" id="title" >
 
                                     </div>
+
                                     <div class="form-group">
-                                        <label class="font-weight-semibold" for="detail">Chi tiết  </label>
-                                        <input type="text" class="form-control" id="detail" >
+                                        <label class="font-weight-semibold" for="detail">Chi tiết   </label>
+                                        <textarea name="detail" id="detail" class="form-control"></textarea>
 
                                     </div>
                                     <div class="form-group">
@@ -49,7 +50,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="isActive">
+                                            <input type="checkbox" class="form-check-input" id="isActive" checked>
                                             <label class="form-check-label" for="isActive" >Hoạt động</label>
                                         </div>
                                     </div>
@@ -85,7 +86,25 @@
 <div th:replace="~{admin/fragments/script :: script}"></div>
 
 <script>
+    function uploadImage() {
+    const fileInput = document.getElementById('image');
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
 
+    fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text()) // Đọc phản hồi dưới dạng văn bản
+    .then(data => {
+        console.log("Image uploaded to Cloudinary:", data);
+        document.getElementById("imageUrl").src = data; // Hiển thị ảnh tải lên
+    })
+    .catch(error => {
+        console.error("Error uploading image:", error);
+    });
+}
 
     document.getElementById('addBlogForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
@@ -139,7 +158,42 @@
     }
 });
 
+ClassicEditor
+    .create(document.querySelector('#detail'), {
+        ckfinder: {
+            uploadUrl: '/api/images/upload',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Giúp Spring Boot nhận diện đây là yêu cầu AJAX
+            }
+        }
+    })
+    .then(editor => {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return {
+                upload: () => loader.file
+                    .then(file => {
+                        const formData = new FormData();
+                        formData.append('file', file);
 
+                        return fetch('/api/images/upload', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.text())  // Đọc phản hồi dưới dạng văn bản
+                        .then(url => {
+                            // Đảm bảo rằng phản hồi là URL hợp lệ
+                            if (!url.startsWith('http')) {
+                                throw new Error('Invalid response from server');
+                            }
+                            return { default: url };  // Trả về URL cho CKEditor
+                        });
+                    })
+            };
+        };
+    })
+    .catch(error => {
+        console.error('Error initializing CKEditor:', error);
+    });
 </script>
 </body>
 

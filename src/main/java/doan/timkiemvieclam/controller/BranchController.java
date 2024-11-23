@@ -1,6 +1,7 @@
 package doan.timkiemvieclam.controller;
 
 import doan.timkiemvieclam.entity.Branch;
+import doan.timkiemvieclam.entity.Employersq;
 import doan.timkiemvieclam.service.BranchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class BranchController {
         return branchService.getAllBranches(); // Lấy danh sách tất cả chi nhánh
     }
 
-    @GetMapping("/create")
+    @GetMapping("/Create")
     public String createBranchForm() {
         return "admin/Branch/Create"; // Trả về tên của trang tạo chi nhánh
     }
@@ -42,16 +43,20 @@ public class BranchController {
     }
 
     // Lấy ra chi nhánh theo ID
-    @GetMapping("/edit")
-    public String editBranch(@RequestParam Integer id, Model model) {
-        Optional<Branch> branchOpt = branchService.getBranchById(id);
-        if (branchOpt.isPresent()) {
-            model.addAttribute("branch", branchOpt.get());
+    @GetMapping("/Edit/{id}")
+    public String editBranch(@PathVariable("id") Integer id) {
             return "admin/Branch/Edit"; // Tên của trang HTML để sửa
-        }
-        return "redirect:/admin/Branch"; // Chuyển hướng nếu không tìm thấy chi nhánh
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Branch> getBranchById(@PathVariable Integer id) {
+        Optional<Branch> brOptional = branchService.getBranchById(id);
+        if (brOptional.isPresent()) {
+            return ResponseEntity.ok(brOptional.get()); // Trả về 200 OK cùng với thông tin blog
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
+        }
+    }
     @PutMapping("/{id}")
     public ResponseEntity<Branch> updateBranch(@PathVariable Integer id, @RequestBody Branch branch) {
         Optional<Branch> existingBranch = branchService.getBranchById(id);

@@ -31,20 +31,25 @@
                                     <input type="hidden" name="blogId" />
                                     <div class="form-group">
                                         <label class="font-weight-semibold" for="image">Ảnh</label>
-                                        <input type="file" name="file" class="form-control" id="image">
+                                        <input type="file" name="file" class="form-control" id="image" onchange="uploadImage()">
+                                        <img id="imageUrl" alt="Uploaded Image" style="width: 150px; height: 150px; display: none;">
                                     </div>
+
                                     <div class="form-group">
                                         <label class="font-weight-semibold" for="title">Tiêu đề</label>
                                         <input type="text" class="form-control" id="title" required>
                                     </div>
+
                                     <div class="form-group">
-                                        <label class="font-weight-semibold" for="detail">Chi tiết</label>
-                                        <input type="text" class="form-control" id="detail" required>
+                                        <label class="font-weight-semibold" for="detail">Chi tiết  </label>
+                                        <textarea name="detail" id="detail" class="form-control"></textarea>
                                     </div>
+
                                     <div class="form-group">
                                         <label class="font-weight-semibold" for="des">Mô tả</label>
                                         <input type="text" class="form-control" id="des" required>
                                     </div>
+
                                     <div class="form-group">
                                         <div class="form-check">
                                             <input type="checkbox" class="form-check-input" id="isActive">
@@ -83,53 +88,168 @@
 
 <div th:replace="~{admin/fragments/script :: script}"></div>
 <script>
-    const pathArray = window.location.pathname.split('/');
-const blogId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
+    ClassicEditor
+    .create(document.querySelector('#detail'), {
+        ckfinder: {
+            uploadUrl: '/api/images/upload',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Giúp Spring Boot nhận diện đây là yêu cầu AJAX
+            }
+        }
+    })
+    .then(editor => {
+            detail = editor; // Lưu lại tham chiếu để sử dụng sau
 
-    function loadBlog() {
-        fetch(`/admin/Blog/${blogId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Không tìm thấy blog');
-                }
-                return response.json();
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return {
+                upload: () => loader.file
+                    .then(file => {
+                        const formData = new FormData();
+                        formData.append('file', file);
+
+                        return fetch('/api/images/upload', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.text())  // Đọc phản hồi dưới dạng văn bản
+                        .then(url => {
+                            // Đảm bảo rằng phản hồi là URL hợp lệ
+                            if (!url.startsWith('http')) {
+                                throw new Error('Invalid response from server');
+                            }
+                            return { default: url };  // Trả về URL cho CKEditor
+                        });
+                    })
+            };
+        };
+    })
+    .catch(error => {
+        console.error('Error initializing CKEditor:', error);
+    });
+
+        const pathArray = window.location.pathname.split('/');
+        const blogId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
+        function loadBlog() {
+         fetch(`/admin/Blog/${blogId}`)
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Không tìm thấy blog');
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 // Cập nhật các trường khác
+                 document.getElementById("title").value = data.title || '';
+                 if (detail) {
+                 detail.setData(data.detail || '');
+                 }
+                 document.getElementById("des").value = data.description || '';
+                 document.getElementById("isActive").checked = data.isActive || false;
+
+                 // Cập nhật hình ảnh nếu có
+                 const previewImage = document.getElementById("imageUrl");
+                 if (data.image) {
+                     previewImage.src = data.image; // Lấy URL hình ảnh từ cơ sở dữ liệu
+                     previewImage.style.display = "block"; // Hiển thị hình ảnh
+                 } else {
+                     previewImage.style.display = "none"; // Ẩn hình ảnh nếu không có
+                 }
+             })
+             .catch(error => {
+                 document.getElementById("responseMessage").innerText = "Lỗi khi tải blog: " + error.message;
+                 document.getElementById("responseMessage").style.display = "block";
+             });
+         }
+
+
+            function uploadImage() {
+            const fileInput = document.getElementById('image');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/images/upload', {
+                method: 'POST',
+                body: formData
             })
+            .then(response => response.text()) // Đọc phản hồi dưới dạng văn bản
             .then(data => {
-                document.getElementById("image").value = data.image || '';
-                document.getElementById("title").value = data.title || '';
-                document.getElementById("detail").value = data.detail || '';
-                document.getElementById("des").value = data.description || '';
-                document.getElementById("isActive").checked = data.isActive || false;
+                console.log("Image uploaded to Cloudinary:", data);
+                document.getElementById("imageUrl").src = data; // Hiển thị ảnh tải lên
             })
             .catch(error => {
-                document.getElementById("responseMessage").innerText = "Lỗi khi tải blog: " + error.message;
-                document.getElementById("responseMessage").style.display = "block";
+                console.error("Error uploading image:", error);
             });
-    }
+        }
+     function updateBlog() {
+    const fileInput = document.getElementById('image');
+    const file = fileInput.files[0]; // Lấy file ảnh từ input
+    let imageUrl = document.getElementById("imageUrl").src; // Lấy URL hiện tại của ảnh
 
-    // Hàm cập nhật blog
-    function updateBlog() {
-        const blogData = {
-            image: document.getElementById('image').value,
-            title: document.getElementById("title").value,
-            detail: document.getElementById("detail").value,
-            description: document.getElementById("des").value,
-            isActive: document.getElementById("isActive").checked,
-        };
+    // Tạo đối tượng dữ liệu cho blog
+    const blogData = {
+        title: document.getElementById("title").value,
+        detail: detail.getData(),
+        description: document.getElementById("des").value,
+        isActive: document.getElementById("isActive").checked,
+    };
+
+    // Nếu có file ảnh mới, tải lên Cloudinary
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Tải ảnh lên Cloudinary
+        fetch('/api/images/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Lỗi khi tải ảnh lên Cloudinary');
+            }
+            return response.text(); // Đọc phản hồi dưới dạng văn bản
+        })
+        .then(data => {
+            console.log("Image uploaded to Cloudinary:", data);
+            imageUrl = data; // Cập nhật URL với URL mới
+
+            // Gửi yêu cầu PUT để cập nhật blog
+            return fetch(`/admin/Blog/${blogId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({...blogData, image: imageUrl}), // Kết hợp dữ liệu blog với URL hình ảnh
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Cập nhật thành công!");
+                window.location.href = '/admin/Blog'; // Chuyển về danh sách blog
+            } else {
+                alert("Cập nhật thất bại!");
+            }
+        })
+        .catch(error => {
+            document.getElementById("responseMessage").innerText = "Lỗi khi cập nhật blog: " + error.message;
+            document.getElementById("responseMessage").style.display = "block";
+        });
+    } else {
+        // Nếu không có file mới, gửi yêu cầu PUT với URL hình ảnh hiện tại
+        blogData.image = imageUrl; // Gán URL hiện tại vào dữ liệu blog
 
         fetch(`/admin/Blog/${blogId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(blogData),
+            body: JSON.stringify(blogData), // Gửi dữ liệu blog
         })
         .then(response => {
             if (response.ok) {
                 alert("Cập nhật thành công!");
-                // Có thể chuyển hướng về danh sách blog hoặc trang khác nếu cần
-                window.location.href = '/admin/Blog'; // Ví dụ chuyển về danh sách chi nhánh
-
+                window.location.href = '/admin/Blog'; // Chuyển về danh sách blog
             } else {
                 alert("Cập nhật thất bại!");
             }
@@ -139,9 +259,11 @@ const blogId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
             document.getElementById("responseMessage").style.display = "block";
         });
     }
+}
 
-    // Gọi hàm để tải thông tin blog khi trang được tải
+             // Gọi hàm để tải thông tin blog khi trang được tải
     loadBlog();
+
 </script>
 
 </body>

@@ -18,59 +18,59 @@
 
       <!-- Content Wrapper START -->
       <div class="main-content">
-        <form method="post" th:action="@{/admin/Employer/Edit/{id}(id=${edit1.employerId})}" th:object="${edit1}" >
-
-          <input type="hidden" th:field="*{employerId}" />
+        <form id="updateEm" >
           <div class="page-header no-gutters has-tab">
             <div class="d-md-flex m-b-15 align-items-center justify-content-between">
 
-
             </div>
           </div>
+
           <div class="tab-content m-t-15">
             <div class="tab-pane fade show active" id="product-edit-basic" >
               <div class="card">
                 <div class="card-body">
+                  <input type="hidden" name="employerId" />
+
                   <div class="form-group">
-                    <label class="font-weight-semibold" for="employerAvatar">Ảnh đại diện</label>
-
-                    <input type="file" class="form-control" id="employerAvatar" th:field="*{employerAvatar}"  >
-
+                    <label class="font-weight-semibold" for="employerAvatar">Ảnh</label>
+                    <input type="file" name="file" class="form-control" id="employerAvatar" onchange="uploadImage()">
+                    <img id="imageUrl" alt="Uploaded Image" style="width: 150px; height: 150px; display: none;">
                   </div>
+
                   <div class="form-group">
                     <label class="font-weight-semibold" for="employerName">Tên nhà tuyển dụng </label>
-                    <input type="text" class="form-control" id="employerName" th:field="*{employerName}" >
+                    <input type="text" class="form-control" id="employerName" required>
                   </div>
+
                   <div class="form-group">
                     <label class="font-weight-semibold" for="employerAddress">Địa chỉ</label>
-                    <input type="text" class="form-control" id="employerAddress" th:field="*{employerAddress}">
+                    <input type="text" class="form-control" id="employerAddress" required>
                   </div>
                   <div class="form-group">
                     <label class="font-weight-semibold" for="employerWebsite">Link website</label>
-                    <input type="text" class="form-control" id="employerWebsite"  th:field="*{employerWebsite}">
+                    <input type="text" class="form-control" id="employerWebsite" required>
                   </div>
                   <div class="form-group">
                     <label class="font-weight-semibold" for="description">Mô tả</label>
-                    <input type="text" class="form-control" id="description" th:field="*{description}">
+                    <input type="text" class="form-control" id="description" required>
                   </div>
                   <div class="form-group">
                     <label class="font-weight-semibold" for="quantity">Số lượng thành viên</label>
-                    <input type="text" class="form-control" id="quantity" th:field="*{quantity}">
+                    <input type="text" class="form-control" id="quantity" required>
                   </div>
+
                   <div class="form-group">
                     <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="isActive" th:field="*{isActive}">
+                      <input type="checkbox" class="form-check-input" id="isActive" required>
                       <label class="form-check-label" for="isActive" >Hoạt động</label>
                     </div>
                   </div>
 
 
-
-
-                  <div class="m-b-15 text-right ">
-                    <button class="btn btn-primary">
+                  <div class="m-b-15 text-right">
+                    <button type="button" class="btn btn-primary" onclick="updateEm()">
                       <i class="anticon anticon-save"></i>
-                      <span>Lưu thay đổi</span>
+                      <span>Cập nhật</span>
                     </button>
                   </div>
                 </div>
@@ -96,7 +96,146 @@
 
 
 <div th:replace="~{admin/fragments/script :: script}"></div>
+<script>
+    const pathArray = window.location.pathname.split('/');
+    const employerId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
+        function loadEm() {
+         fetch(`/admin/Employer/${employerId}`)
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Không tìm thấy blog');
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 // Cập nhật các trường khác
+                 document.getElementById("employerName").value = data.employerName || '';
+                 document.getElementById("employerAddress").value = data.employerAddress || '';
+                 document.getElementById("employerWebsite").value = data.employerWebsite || '';
+                 document.getElementById("description").value = data.description || '';
+                 document.getElementById("quantity").value = data.quantity || '';
+                 document.getElementById("isActive").checked = data.isActive || false;
 
+                 // Cập nhật hình ảnh nếu có
+                 const previewImage = document.getElementById("imageUrl");
+                 if (data.employerAvatar) {
+                     previewImage.src = data.employerAvatar; // Lấy URL hình ảnh từ cơ sở dữ liệu
+                     previewImage.style.display = "block"; // Hiển thị hình ảnh
+                 } else {
+                     previewImage.style.display = "none"; // Ẩn hình ảnh nếu không có
+                 }
+             })
+             .catch(error => {
+                 document.getElementById("responseMessage").innerText = "Lỗi khi tải blog: " + error.message;
+                 document.getElementById("responseMessage").style.display = "block";
+             });
+     }
+
+   function uploadImage() {
+            const fileInput = document.getElementById('employerAvatar');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/images/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text()) // Đọc phản hồi dưới dạng văn bản
+            .then(data => {
+                console.log("Image uploaded to Cloudinary:", data);
+                document.getElementById("imageUrl").src = data; // Hiển thị ảnh tải lên
+            })
+            .catch(error => {
+                console.error("Error uploading image:", error);
+            });
+        }
+  function updateEm() {
+    const fileInput = document.getElementById('employerAvatar');
+    const file = fileInput.files[0]; // Lấy file ảnh từ input
+    let imageUrl = document.getElementById("imageUrl").src; // Lấy URL hiện tại của ảnh
+
+    // Tạo đối tượng dữ liệu cho blog
+    const employerData = {
+
+        employerName: document.getElementById("employerName").value,
+        employerAddress: document.getElementById("employerAddress").value,
+        employerWebsite: document.getElementById("employerWebsite").value,
+        description: document.getElementById("description").value,
+        quantity: document.getElementById("quantity").value,
+        isActive: document.getElementById("isActive").checked,
+    };
+
+    // Nếu có file ảnh mới, tải lên Cloudinary
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Tải ảnh lên Cloudinary
+        fetch('/api/images/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Lỗi khi tải ảnh lên Cloudinary');
+            }
+            return response.text(); // Đọc phản hồi dưới dạng văn bản
+        })
+        .then(data => {
+            console.log("Image uploaded to Cloudinary:", data);
+            imageUrl = data; // Cập nhật URL với URL mới
+
+            // Gửi yêu cầu PUT để cập nhật
+            return fetch(`/admin/Employer/${employerId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({...employerData, employerAvatar: imageUrl}), // Kết hợp dữ liệu blog với URL hình ảnh
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Cập nhật thành công!");
+                window.location.href = '/admin/Employer'; // Chuyển về danh sách blog
+            } else {
+                alert("Cập nhật thất bại!");
+            }
+        })
+        .catch(error => {
+            document.getElementById("responseMessage").innerText = "Lỗi khi cập nhật blog: " + error.message;
+            document.getElementById("responseMessage").style.display = "block";
+        });
+    } else {
+        // Nếu không có file mới, gửi yêu cầu PUT với URL hình ảnh hiện tại
+        employerData.employerAvatar = imageUrl; // Gán URL hiện tại vào dữ liệu blog
+
+        fetch(`/admin/Employer/${employerId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(employerData), // Gửi dữ liệu blog
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Cập nhật thành công!");
+                window.location.href = '/admin/Employer'; // Chuyển về danh sách blog
+            } else {
+                alert("Cập nhật thất bại!");
+            }
+        })
+        .catch(error => {
+            document.getElementById("responseMessage").innerText = "Lỗi khi cập nhật blog: " + error.message;
+            document.getElementById("responseMessage").style.display = "block";
+        });
+    }
+}
+
+             // Gọi hàm để tải thông tin  khi trang được tải
+    loadEm();
+</script>
 </body>
 
 </html>

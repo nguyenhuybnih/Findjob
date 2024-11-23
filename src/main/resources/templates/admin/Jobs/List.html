@@ -16,14 +16,9 @@
     <div class="page-container">
       <div class="main-content">
         <div class="page-header">
-          <h2 class="header-title">Orders </h2>
+          <h2 class="header-title">Danh sách công việc </h2>
           <div class="header-sub-title">
-            <nav class="breadcrumb breadcrumb-dash">
-              <a href="#" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
-              <a class="breadcrumb-item" href="#">Apps</a>
-              <a class="breadcrumb-item" href="#">E-commerce</a>
-              <span class="breadcrumb-item active">Orders List</span>
-            </nav>
+
           </div>
         </div>
         <div class="card">
@@ -31,7 +26,7 @@
             <div class="row m-b-30">
 
               <div class="col-lg-4 text-left">
-                <a class="btn btn-primary" href="/admin/Accounts/Create">
+                <a class="btn btn-primary" href="/admin/Jobs/Create">
                   <i class="anticon anticon-plus-circle m-r-5"></i>
                   <span style="color: white;">Thêm mới </span>
                 </a>
@@ -43,9 +38,14 @@
                 <tr>
 
                   <th>STT</th>
-                  <th>Tài khoản</th>
-                  <th>Vị trí</th>
+                  <th>Tên công việc</th>
+                  <th>Chi tiết tuyển dụng </th>
+                  <th>Địa điểm làm việc </th>
+                  <th>Ngành nghề</th>
+                  <th>Lương</th>
+
                   <th>Hoạt động</th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -65,35 +65,37 @@
 
 </div>
 <script>
-  fetch('/admin/Accounts/data')
+  fetch('/admin/Jobs/data')
     .then(response => response.json())
     .then(data => {
       let tableBody = document.querySelector('tbody');
       tableBody.innerHTML = '';
-      data.forEach((acc, index) => {
+      console.log(data)
+      data.forEach((job, index) => {
 
         tableBody.innerHTML += `
           <tr>
             <td>${index + 1}</td>
-            <td>${acc.accountName}</td>
-            <td>
-                    ${acc.role ? (acc.role.roleId == 1 ? 'Admin' : acc.role.roleId == 2 ? 'Nhà tuyển dụng' : 'Người tìm việc') : 'Chưa xác định'}
-            </td>
+            <td>${job.jobName}</td>
+            <td>${job.jobDetails}</td>
+            <td>${job.jobAddress}</td>
+            <td>${job.branch.branchName}</td>
+            <td>${job.salary}</td>
 
             <td>
               <div class="d-flex align-items-center">
-                <div class="badge m-r-10 ${acc.isActive ? 'badge-success badge-dot' : 'badge-danger badge-dot'}"></div>
-                <div>${acc.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
+                <div class="badge m-r-10 ${job.isActive ? 'badge-success badge-dot' : 'badge-danger badge-dot'}"></div>
+                <div>${job.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
               </div>
             </td>
 
             <td class="text-right">
               <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
-                    onclick="editAccount(${acc.accountId})">
+                    onclick="editJob(${job.jobId})">
                 <i class="anticon anticon-edit"></i>
               </a>
               <button class="btn btn-icon btn-hover btn-sm btn-rounded"
-                      onclick="deleteAcc(${acc.accountId})">
+                      onclick="deleteJob(${job.jobId})">
                 <i class="anticon anticon-delete"></i>
               </button>
             </td>
@@ -105,9 +107,9 @@
     });
 
     ///
-  function deleteAcc(accountId) {
+  function deleteJob(jobId) {
     if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-      fetch(`/admin/Accounts/${accountId}`, {
+      fetch(`/admin/Jobs/${jobId}`, {
         method: 'DELETE',
       })
       .then(response => {
@@ -125,8 +127,8 @@
     }
   }
 
-function editAccount(accountId) {
-window.location.href = `/admin/Accounts/Edit/${accountId}`;
+function editJob(jobId) {
+window.location.href = `/admin/Jobs/Edit/${jobId}`;
 }
 
 </script>
