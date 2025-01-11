@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 
-<head th:replace="~{admin/fragments/head :: head}">
+<head th:replace="~{employer/fragments/head :: head}">
 
 </head>
 
 <body>
 <div class="app">
     <div class="layout">
-        <div th:replace="~{admin/fragments/header :: header}"> </div>
-        <div th:replace="~{admin/fragments/sidenav :: sidenav}"> </div>
+        <div th:replace="~{employer/fragments/header :: header}"> </div>
+        <div th:replace="~{employer/fragments/sidenav :: sidenav}"> </div>
 
 
         <!-- Page Container START -->
@@ -92,7 +92,7 @@
 </div>
 
 
-<div th:replace="~{admin/fragments/script :: script}"></div>
+<div th:replace="~{employer/fragments/script :: script}"></div>
 
 <script>
 
@@ -136,7 +136,7 @@
 
 
     document.addEventListener("DOMContentLoaded", function() {
-           fetch('/admin/Branch/data')
+           fetch('/admin/Branch/data') // API để lấy danh sách quyền
                 .then(response => response.json())
                 .then(data => {
                     let branchropdown = document.getElementById('branch');
@@ -154,8 +154,10 @@
            });
     document.getElementById('addJobForm').addEventListener('submit', async function(event) {
         event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+        const accountId = sessionStorage.getItem('accountId');
 
         const jobData = {
+            account: accountId,
             jobName: document.getElementById('jobName').value.trim(),
             jobDetails: document.getElementById('jobDetails').value.trim(),
             jobAddress: document.getElementById('jobAddress').value,
@@ -168,7 +170,7 @@
         };
 
         try {
-            const response = await fetch('/admin/Jobs', {
+            const response = await fetch('/employer/Jobs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -177,7 +179,7 @@
             });
 
             if (response.ok) {
-                  window.location.href = '/admin/Jobs';
+                  window.location.href = '/employer/Jobs';
             } else {
                 console.log("co loi")
                 document.getElementById('responseMessage').innerHTML = 'Có lỗi xảy ra khi thêm mới ';

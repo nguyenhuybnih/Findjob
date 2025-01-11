@@ -1,7 +1,9 @@
 package doan.timkiemvieclam.controller;
 
 import doan.timkiemvieclam.entity.Blogs;
+import doan.timkiemvieclam.entity.Accounts;
 import doan.timkiemvieclam.service.BlogService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -38,7 +40,11 @@ public class BlogController {
     }
 
     @PostMapping
-    public ResponseEntity<Blogs> addBlog(@RequestBody Blogs blog) {
+    public ResponseEntity<Blogs> addBlog(@RequestBody Blogs blog, HttpSession session) {
+        Accounts account = (Accounts) session.getAttribute("account"); // Lấy đối tượng account từ session
+        if (account != null) {
+            blog.setAccount(account); // Gán đối tượng account vào blog
+        }
         Blogs newblog = BlogServices.saveBlog(blog);// Lưu blog
         return ResponseEntity.status(HttpStatus.CREATED).body(newblog);
     }
@@ -60,10 +66,16 @@ public class BlogController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Blogs> updateBlog(@PathVariable Integer id, @RequestBody Blogs blogs) {
+    public ResponseEntity<Blogs> updateBlog(@PathVariable Integer id, @RequestBody Blogs blogs, HttpSession session) {
         Optional<Blogs> existingBlog = BlogServices.getBlogById(id);
         if (existingBlog.isPresent()) {
             blogs.setBlogId(id);
+
+            Accounts account = (Accounts) session.getAttribute("account");
+
+            if (account != null) {
+                blogs.setAccount(account); // Gán đối tượng account vào blog
+            }
             Blogs updatedBlog = BlogServices.saveBlog(blogs);
             return ResponseEntity.ok(updatedBlog);
         }

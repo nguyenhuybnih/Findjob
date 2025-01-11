@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{employer/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+  <div class="layout">
+    <div th:replace="~{employer/fragments/header :: header}"> </div>
+    <div th:replace="~{employer/fragments/sidenav :: sidenav}"> </div>
+
+
+    <!-- Page Container START -->
+    <div class="page-container">
+      <div class="main-content">
+        <div class="page-header">
+          <h2 class="header-title">Danh sách công việc </h2>
+          <div class="header-sub-title">
+
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="row m-b-30">
+
+              <div class="col-lg-4 text-left">
+                <a class="btn btn-primary" href="/employer/Jobs/Create">
+                  <i class="anticon anticon-plus-circle m-r-5"></i>
+                  <span style="color: white;">Thêm mới </span>
+                </a>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover e-commerce-table">
+                <thead>
+                <tr>
+
+                  <th>STT</th>
+                  <th>Tên công việc</th>
+                  <th>Chi tiết tuyển dụng </th>
+                  <th>Địa điểm làm việc </th>
+                  <th>Ngành nghề</th>
+                  <th>Lương</th>
+
+                  <th>Hoạt động</th>
+
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div th:replace="~{employer/fragments/script :: script}">
+
+</div>
+<script>
+  fetch('/employer/Jobs/data')
+    .then(response => response.json())
+    .then(data => {
+      let tableBody = document.querySelector('tbody');
+      tableBody.innerHTML = '';
+      console.log(data)
+      data.forEach((job, index) => {
+
+        tableBody.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${job.jobName}</td>
+            <td>${job.jobDetails}</td>
+            <td>${job.jobAddress}</td>
+            <td>${job.branch.branchName}</td>
+            <td>${job.salary}</td>
+
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="badge m-r-10 ${job.isActive ? 'badge-success badge-dot' : 'badge-danger badge-dot'}"></div>
+                <div>${job.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
+              </div>
+            </td>
+
+            <td class="text-right">
+              <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
+                    onclick="editJob(${job.jobId})">
+                <i class="anticon anticon-edit"></i>
+              </a>
+              <button class="btn btn-icon btn-hover btn-sm btn-rounded"
+                      onclick="deleteJob(${job.jobId})">
+                <i class="anticon anticon-delete"></i>
+              </button>
+            </td>
+          </tr>`;
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+
+    ///
+  function deleteJob(jobId) {
+    if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+      fetch(`/employer/Jobs/${jobId}`, {
+        method: 'DELETE',
+      })
+      .then(response => {
+        if (response.ok) {
+          // Xóa hàng khỏi bảng
+          location.reload(); // Tải lại trang để cập nhật danh sách người dùng
+        } else {
+          alert('Có lỗi xảy ra khi xóa người dùng.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Lỗi kết nối: ' + error.message);
+      });
+    }
+  }
+
+function editJob(jobId) {
+window.location.href = `/employer/Jobs/Edit/${jobId}`;
+}
+
+</script>
+</body>
+
+</html>

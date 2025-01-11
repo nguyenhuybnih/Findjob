@@ -1,9 +1,11 @@
 package doan.timkiemvieclam.controller;
 
+import doan.timkiemvieclam.entity.Accounts;
 import doan.timkiemvieclam.entity.Blogs;
 import doan.timkiemvieclam.entity.Employersq;
 import doan.timkiemvieclam.service.EmployerService;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +43,11 @@ public class ManageEmployerController {
     }
 
     @PostMapping
-    public ResponseEntity<Employersq> addBlog(@RequestBody Employersq em) {
+    public ResponseEntity<Employersq> addBlog(@RequestBody Employersq em, HttpSession session) {
+        Accounts account = (Accounts) session.getAttribute("account"); // Lấy đối tượng account từ session
+        if (account != null) {
+            em.setAccount(account); // Gán đối tượng account vào blog
+        }
         Employersq newbEm = employerService.saveEmployer(em);// Lưu blog
         return ResponseEntity.status(HttpStatus.CREATED).body(newbEm);
     }
@@ -64,10 +70,13 @@ public class ManageEmployerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employersq> updateEmp(@PathVariable Integer id, @RequestBody Employersq em) {
+    public ResponseEntity<Employersq> updateEmp(@PathVariable Integer id, @RequestBody Employersq em, HttpSession session) {
         Optional<Employersq> existingEm = employerService.getEmployerById(id);
         if (existingEm.isPresent()) {
             em.setEmployerId(id);
+            Employersq existingEmployer = existingEm.get();
+            em.setAccount(existingEmployer.getAccount());
+
             Employersq updatedEm = employerService.saveEmployer(em);
             return ResponseEntity.ok(updatedEm);
         }

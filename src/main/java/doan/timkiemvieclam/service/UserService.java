@@ -1,7 +1,7 @@
 package doan.timkiemvieclam.service;
 
 
-import doan.timkiemvieclam.entity.users;
+import doan.timkiemvieclam.entity.Users;
 
 import doan.timkiemvieclam.repository.UserRespository;
 
@@ -19,22 +19,22 @@ public class UserService {
     private UserRespository usersRepository;
 
     // Lấy danh sách tất cả nhà tuyển dụng
-    public List<users> getAllUsers() {
+    public List<Users> getAllUsers() {
         return usersRepository.findAll();
     }
 
     // Lấy nhà tuyển dụng theo ID
-    public Optional<users> getUsersById(Integer id) {
+    public Optional<Users> getUsersById(Integer id) {
         return usersRepository.findById(id);
     }
 
     // Thêm nhà tuyển dụng
-    public users saveUsers(users users) {
+    public Users saveUsers(Users users) {
         return usersRepository.save(users);
     }
 
-    public users updateUsers(Integer id, users usersDetails) {
-        users users = usersRepository.findById(id)
+    public Users updateUsers(Integer id, Users usersDetails) {
+        Users users = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employer not found with id " + id));
 
         users.setUserName(usersDetails.getUserName());

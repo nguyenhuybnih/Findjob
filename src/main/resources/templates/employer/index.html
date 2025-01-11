@@ -8,8 +8,8 @@
 <body>
 <div class="app">
   <div class="layout">
-    <div th:replace="~{/admin/fragments/header :: header}"> </div>
-    <div th:replace="~{/admin/fragments/sidenav :: sidenav}"> </div>
+  <div th:replace="~{/employer/fragments/header :: header}"> </div>
+  <div th:replace="~{/employer/fragments/sidenav :: sidenav}"> </div>
 
 
     <!-- Page Container START -->
@@ -19,9 +19,8 @@
       <!-- Content Wrapper START -->
       <div class="main-content">
 
-        <h1>Trang của admin </h1>
-        <p>Xin chào, <span th:text="${username}"></span>!</p>
-
+        <h1>Trang của nhà tuyển dụng  </h1>
+        <p>Xin chào, <span th:text="${username}">Tên tài khoản</span>!</p>
 
       </div>
 
@@ -38,7 +37,7 @@
 </div>
 
 
-<div th:replace="~{/admin/fragments/script :: script}"></div>
+<div th:replace="~{/employer/fragments/script :: script}"></div>
 
 
 

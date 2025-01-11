@@ -33,5 +33,5 @@ public class Employersq {
     private Boolean isActive; // Hoặc sử dụng Boolean và xử lý chuyển đổi trong mã
     @OneToOne
     @JoinColumn(name = "accountId")
-    private Accounts accountId;
+    private Accounts account;
 }

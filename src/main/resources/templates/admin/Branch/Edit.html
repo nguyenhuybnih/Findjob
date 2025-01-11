@@ -64,6 +64,8 @@
   const branchId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
 
     function loadBr() {
+          event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+
     fetch(`/admin/Branch/${branchId}`)
         .then(response => {
             if (!response.ok) {

@@ -19,6 +19,7 @@ public class Jobs {
 
     private String jobName;
 
+    @Lob
     private String jobDetails;
 
     private String jobAddress;
@@ -31,9 +32,9 @@ public class Jobs {
     private Branch branch;
 
     @ManyToOne
-    @JoinColumn(name = "employerId")
+    @JoinColumn(name = "accountId")
 
-    private Employersq employersq;
+    private Accounts account;
 
     private Boolean isActive;
 

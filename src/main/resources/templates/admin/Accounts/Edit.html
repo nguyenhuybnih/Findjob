@@ -90,6 +90,7 @@
     const accountId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
 
     function loadAcc() {
+
     fetch(`/admin/Accounts/${accountId}`)
         .then(response => {
             if (!response.ok) {
@@ -120,6 +121,8 @@
 
     // Hàm cập nhật blog
     function saveAccount() {
+          event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+
         const accData = {
             accountName: document.getElementById('accountName').value,
             password: document.getElementById("password").value,

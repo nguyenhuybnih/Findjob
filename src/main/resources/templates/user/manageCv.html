@@ -71,7 +71,7 @@
 <div th:replace="~{/user/fragments/script :: script}"></div>
 
 <script th:if="${successMessage}">
-  alert('Thành công: ' + [[${successMessage}]]);
+  alert('[[${successMessage}]]');
 </script>
 
 

@@ -130,6 +130,8 @@
         const pathArray = window.location.pathname.split('/');
         const blogId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
         function loadBlog() {
+              event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+
          fetch(`/admin/Blog/${blogId}`)
              .then(response => {
                  if (!response.ok) {

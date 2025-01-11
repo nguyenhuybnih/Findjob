@@ -20,6 +20,7 @@ public class Blogs {
 
     private String title;
 
+    @Lob
     private String detail;
 
     private String image;
