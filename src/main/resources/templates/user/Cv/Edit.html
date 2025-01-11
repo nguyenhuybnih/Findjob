@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="~{/user/fragments/head :: head(pageTitle='Sửa CV')}">
+</head>
+<body id="top">
+
+<div id="overlayer"></div>
+<div class="loader">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+<div class="site-wrap">
+    <!-- NAVBAR -->
+    <div th:replace="~{/user/fragments/navbar :: navbar}"> </div>
+
+    <section class="section-hero overlay inner-page bg-image" style="background-image: url('/assets1/images/hero_1.jpg');" id="home-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7">
+                    <h1 class="text-white font-weight-bold">Sửa CV</h1>
+                    <p>Xin chào, <span th:text="${username12}">Tên tài khoản</span>!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="site-section">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <h4 class="text-black mb-4">Thông tin CV</h4>
+                    <form id="cvForm">
+                        <input type="hidden" id="cvId" name="cvId">
+
+                        <div class="form-group">
+                            <label for="fullName">Họ và Tên</label>
+                            <input type="text" class="form-control" id="fullName" name="fullName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Địa chỉ</label>
+                            <input type="text" class="form-control" id="address" name="address" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dateOfBirth">Ngày sinh</label>
+                            <input type="text" class="form-control" id="dateOfBirth" name="dateOfBirth" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phoneNumber">Số điện thoại</label>
+                            <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="skill">Kỹ năng</label>
+                            <textarea class="form-control" id="skill" name="skill" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="careerObjective">Mục tiêu nghề nghiệp </label>
+                            <textarea class="form-control" id="careerObjective" name="careerObjective" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="education">Trình độ học vấn </label>
+                            <textarea class="form-control" id="education" name="education" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="project">Dự án đã làm </label>
+                            <textarea class="form-control" id="project" name="project" rows="4" required></textarea>
+                        </div>
+
+                        <button type="button" onclick="updateCv()" class="btn btn-primary">Lưu CV</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="~{/user/fragments/footer :: footer}"></footer>
+
+</div>
+
+<!-- SCRIPTS -->
+<div th:replace="~{/user/fragments/script :: script}"></div>
+
+<script>
+    const pathArray = window.location.pathname.split('/');
+    const cvId = pathArray[pathArray.length - 1]; // Lấy ID CV từ URL
+
+    function loadCV() {
+        fetch(`/user/cv/${cvId}`) // Gửi yêu cầu API lấy thông tin CV
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Không tìm thấy CV');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Điền dữ liệu vào các trường
+                document.getElementById("fullName").value = data.fullName || '';
+                document.getElementById("address").value = data.address || '';
+                document.getElementById("dateOfBirth").value = data.dateOfBirth || '';
+                document.getElementById("phoneNumber").value = data.phoneNumber || '';
+                document.getElementById("skill").value = data.skill || '';
+                document.getElementById("careerObjective").value = data.careerObjective || '';
+                document.getElementById("education").value = data.education || '';
+                document.getElementById("project").value = data.project || '';
+            })
+            .catch(error => {
+                alert("Lỗi khi tải CV: " + error.message);
+            });
+    }
+    function updateCv(){
+    const accountId = sessionStorage.getItem('accountId');
+     console.log('Account ID:', accountId);  // Thêm dòng này để kiểm tra
+     if (!accountId) {
+         alert("Không có accountId trong sessionStorage!");
+         return;
+     }
+    const formData = {
+        account: accountId,
+        fullName: document.getElementById("fullName").value,
+        address: document.getElementById("address").value,
+        dateOfBirth: document.getElementById("dateOfBirth").value,
+        phoneNumber: document.getElementById("phoneNumber").value,
+        skill: document.getElementById("skill").value,
+        careerObjective: document.getElementById("careerObjective").value,
+        education: document.getElementById("education").value,
+        project: document.getElementById("project").value,
+    };
+    fetch(`/user/cv/${cvId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Cập nhật CV thất bại");
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert("Cập nhật CV thành công!");
+        })
+        .catch(error => {
+            alert("Lỗi khi cập nhật CV: " + error.message);
+        });
+
+}
+    document.addEventListener("DOMContentLoaded", loadCV);
+
+</script>
+
+</body>
+</html>

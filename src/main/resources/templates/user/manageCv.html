@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="~{/user/fragments/head :: head(pageTitle='Quản Lý CV')}">
+</head>
+<body id="top">
+
+<div id="overlayer"></div>
+<div class="loader">
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<div class="site-wrap">
+
+  <!-- NAVBAR -->
+  <div th:replace="~{/user/fragments/navbar :: navbar}"> </div>
+
+  <!-- HOME -->
+  <section class="section-hero overlay inner-page bg-image" style="background-image: url('/assets1/images/hero_1.jpg');" id="home-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7">
+          <h1 class="text-white font-weight-bold">Quản Lý CV để ứng tuyển </h1>
+          <p>Xin chào, <span th:text="${username12}">Tên tài khoản</span>!</p>
+
+          <div class="custom-breadcrumbs">
+            <a href="#">Home</a> <span class="mx-2 slash">/</span>
+            <span class="text-white"><strong>Quản lý CV</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="site-section">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-md-12">
+          <h4 class="text-black mb-4">Danh sách CV của bạn</h4>
+
+          <!-- Danh sách CV -->
+          <div class="row" id="cvList">
+            <div class="col-md-4 mb-4" th:each="cv : ${cvs}">
+              <div class="card">
+                <div class="card-body text-center">
+                  <img src="/assets1/images/paper-icon-1.png" alt="CV Icon" class="mb-3" width="50">
+                  <h5 class="card-title" th:text="${cv.fullName}">Tên CV</h5>
+                  <p class="card-text" th:text="'Mã CV: ' + ${cv.cvId}">Mã CV</p>
+                  <form th:action="@{/apply/job/{jobId}/cv/{cvId}(jobId=${jobId}, cvId=${cv.cvId})}" method="post">
+
+                    <button type="submit" class="btn btn-primary">Nạp CV và Ứng Tuyển</button>
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <footer th:replace="~{/user/fragments/footer :: footer}"></footer>
+
+</div>
+
+<div th:replace="~{/user/fragments/script :: script}"></div>
+
+<script th:if="${successMessage}">
+  alert('Thành công: ' + [[${successMessage}]]);
+</script>
+
+
+</body>
+</html>
