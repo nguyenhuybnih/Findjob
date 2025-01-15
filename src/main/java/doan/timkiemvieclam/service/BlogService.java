@@ -68,4 +68,9 @@ public class BlogService {
     public void deleteBlogById(Integer id) {
         blogRepository.deleteById(id);
     }
+    public int countByBlogId() {
+        return blogRepository.countByBlogId();  // Đếm các công việc đang hoạt động
+    }
+
+
 }

@@ -38,7 +38,4 @@ public class Jobs {
 
     private Boolean isActive;
 
-
-
-
 }

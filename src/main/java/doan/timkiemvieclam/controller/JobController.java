@@ -84,7 +84,6 @@ public class JobController {
         Map<String, Object> response = jobService.getJobDetails(id);  // Gọi service để lấy chi tiết công việc
         return ResponseEntity.ok(response);
 
-
     }
 
     // Cập nhật công việc
@@ -114,4 +113,7 @@ public class JobController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
         }
     }
+
+
+
 }

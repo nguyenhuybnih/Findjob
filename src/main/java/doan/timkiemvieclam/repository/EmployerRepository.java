@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface EmployerRepository extends JpaRepository<Employersq,Integer> {
     Employersq findByAccount(Accounts account);
 
+    int countByIsActiveTrue();
 }

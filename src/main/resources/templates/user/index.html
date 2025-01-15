@@ -36,49 +36,24 @@
             <div class="row align-items-center justify-content-center">
                 <div class="col-md-12">
                     <div class="mb-5 text-center">
-                        <h1 class="text-white font-weight-bold">Tìm kiếm</h1>
+                        <h1 class="text-white font-weight-bold">Website tìm kiếm việc làm</h1>
                     </div>
                     <form method="post" class="search-jobs-form">
                         <div class="row mb-5">
+
                             <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4 mb-lg-0">
-                                <input type="text" class="form-control form-control-lg"
-                                       placeholder="Job title, Company...">
+
                             </div>
                             <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4 mb-lg-0">
-                                <select class="selectpicker" data-style="btn-white btn-lg" data-width="100%"
-                                        data-live-search="true" title="Select Region">
-                                    <option>Anywhere</option>
-                                    <option>San Francisco</option>
-                                    <option>Palo Alto</option>
-                                    <option>New York</option>
-                                    <option>Manhattan</option>
-                                    <option>Ontario</option>
-                                    <option>Toronto</option>
-                                    <option>Kansas</option>
-                                    <option>Mountain View</option>
-                                </select>
+
                             </div>
                             <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4 mb-lg-0">
-                                <select class="selectpicker" data-style="btn-white btn-lg" data-width="100%"
-                                        data-live-search="true" title="Select Job Type">
-                                    <option>Part Time</option>
-                                    <option>Full Time</option>
-                                </select>
-                            </div>
-                            <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4 mb-lg-0">
-                                <button type="submit" class="btn btn-primary btn-lg btn-block text-white btn-search">
-                                    <span class="icon-search icon mr-2"></span>Search Job
-                                </button>
+
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 popular-keywords">
-                                <h3>Trending Keywords:</h3>
-                                <ul class="keywords list-unstyled m-0 p-0">
-                                    <li><a href="#" class="">UI Designer</a></li>
-                                    <li><a href="#" class="">Python</a></li>
-                                    <li><a href="#" class="">Developer</a></li>
-                                </ul>
+
                             </div>
                         </div>
                     </form>
@@ -86,9 +61,7 @@
             </div>
         </div>
 
-        <a href="#next" class="scroll-button smoothscroll">
-            <span class=" icon-keyboard_arrow_down"></span>
-        </a>
+
 
     </section>
 
@@ -102,32 +75,25 @@
             </div>
             <div class="row pb-0 block__19738 section-counter">
 
-                <div class="col-6 col-md-6 col-lg-3 mb-5 mb-lg-0">
+                <div class="col-6 col-md-6 col-lg-4 mb-5 mb-lg-0">
                     <div class="d-flex align-items-center justify-content-center mb-2">
-                        <strong class="number" data-number="1930">0</strong>
+                        <strong class="number" th:text="${totalJobs}">0</strong>
                     </div>
-                    <span class="caption">Candidates</span>
+                    <span class="caption">Bài đăng công việc</span>
                 </div>
 
-                <div class="col-6 col-md-6 col-lg-3 mb-5 mb-lg-0">
+                <div class="col-6 col-md-6 col-lg-4 mb-5 mb-lg-0">
                     <div class="d-flex align-items-center justify-content-center mb-2">
-                        <strong class="number" data-number="54">0</strong>
+                        <strong class="number" th:text="${totalBranch}"></strong>
                     </div>
-                    <span class="caption">Jobs Posted</span>
+                    <span class="caption">Số lượng ngành nghề </span>
                 </div>
 
-                <div class="col-6 col-md-6 col-lg-3 mb-5 mb-lg-0">
+                <div class="col-6 col-md-6 col-lg-4 mb-5 mb-lg-0">
                     <div class="d-flex align-items-center justify-content-center mb-2">
-                        <strong class="number" data-number="120">0</strong>
+                        <strong class="number" th:text="${totalEm}" >0</strong>
                     </div>
-                    <span class="caption">Jobs Filled</span>
-                </div>
-
-                <div class="col-6 col-md-6 col-lg-3 mb-5 mb-lg-0">
-                    <div class="d-flex align-items-center justify-content-center mb-2">
-                        <strong class="number" data-number="550">0</strong>
-                    </div>
-                    <span class="caption">Companies</span>
+                    <span class="caption">Số lượng công ty </span>
                 </div>
 
 
@@ -160,21 +126,21 @@
         </div>
     </section>
 
-    <section class="py-5 bg-image overlay-primary fixed overlay"
-             style="background-image: url('/assets1/images/hero_1.jpg');">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h2 class="text-white">Looking For A Job?</h2>
-                    <p class="mb-0 text-white lead">Lorem ipsum dolor sit amet consectetur adipisicing elit tempora
-                        adipisci impedit.</p>
-                </div>
-                <div class="col-md-3 ml-auto">
-                    <a href="#" class="btn btn-warning btn-block btn-lg">Sign Up</a>
-                </div>
-            </div>
-        </div>
-    </section>
+<!--    <section class="py-5 bg-image overlay-primary fixed overlay"-->
+<!--             style="background-image: url('/assets1/images/hero_1.jpg');">-->
+<!--        <div class="container">-->
+<!--            <div class="row align-items-center">-->
+<!--                <div class="col-md-8">-->
+<!--                    <h2 class="text-white">Looking For A Job?</h2>-->
+<!--                    <p class="mb-0 text-white lead">Lorem ipsum dolor sit amet consectetur adipisicing elit tempora-->
+<!--                        adipisci impedit.</p>-->
+<!--                </div>-->
+<!--                <div class="col-md-3 ml-auto">-->
+<!--                    <a href="#" class="btn btn-warning btn-block btn-lg">Sign Up</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </section>-->
 
 
     <section class="site-section py-4">
@@ -184,9 +150,8 @@
                 <div class="col-12 text-center mt-4 mb-5">
                     <div class="row justify-content-center">
                         <div class="col-md-7">
-                            <h2 class="section-title mb-2">Company We've Helped</h2>
-                            <p class="lead">Porro error reiciendis commodi beatae omnis similique voluptate rerum ipsam
-                                fugit mollitia ipsum facilis expedita tempora suscipit iste</p>
+                            <h2 class="section-title mb-2">1 số công ty đã làm việc </h2>
+                            <p class="lead">Dưới đây là 1 số công ty đã hợp tác làm việc với trang tuyển dụng của chúng tôi</p>
                         </div>
                     </div>
 
@@ -230,9 +195,7 @@
                 <div class="row">
                     <div class="col-lg-6 align-self-center text-center text-lg-left">
                         <blockquote>
-                            <p>&ldquo;Soluta quasi cum delectus eum facilis recusandae nesciunt molestias accusantium
-                                libero dolores repellat id in dolorem laborum ad modi qui at quas dolorum voluptatem
-                                voluptatum repudiandae.&rdquo;</p>
+                            <p>&ldquo;Đây là website đầu tiên công ty chúng tôi kết nối để có thể tìm được những ứng viên đạt chất lượng cao.&rdquo;</p>
                             <p><cite> &mdash; Corey Woods, @Dribbble</cite></p>
                         </blockquote>
                     </div>
@@ -246,9 +209,7 @@
                 <div class="row">
                     <div class="col-lg-6 align-self-center text-center text-lg-left">
                         <blockquote>
-                            <p>&ldquo;Soluta quasi cum delectus eum facilis recusandae nesciunt molestias accusantium
-                                libero dolores repellat id in dolorem laborum ad modi qui at quas dolorum voluptatem
-                                voluptatum repudiandae.&rdquo;</p>
+                            <p>&ldquo;Đến với website này chắc chắn sẽ giúp bạn tìm được công việc phù hợp với khả năng của mình.&rdquo;</p>
                             <p><cite> &mdash; Chris Peters, @Google</cite></p>
                         </blockquote>
                     </div>

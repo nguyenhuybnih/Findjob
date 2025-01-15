@@ -31,6 +31,9 @@ public class CurriculumVitaeController {
         if (account != null) {
             model.addAttribute("username12", account.getAccountName()); // Truyền username vào model
         }
+        if (account != null) {
+            model.addAttribute("accountId", account.getAccountId()); // Truyền username vào model
+        }
         // Lấy thông tin tài khoản từ session
         if (account == null) {
             log.info("Account is null in session.");
@@ -63,9 +66,11 @@ public class CurriculumVitaeController {
         return "user/Cv/Index";
     }
 
+
     @ResponseBody
     @PostMapping()
     public ResponseEntity<CurriculumVitae> addCv(@RequestBody CurriculumVitae cv, HttpSession session) {
+
         Accounts currentAccount = (Accounts) session.getAttribute("account");
         if (currentAccount != null) {
             cv.setAccount(currentAccount); // Gán đối tượng account
@@ -109,6 +114,7 @@ public class CurriculumVitaeController {
         if (existingCv.isPresent()) {
             updatedCv.setCvId(cvId);
 
+
             Accounts account = (Accounts) session.getAttribute("account");
             if (account == null) {
                 log.error("Không tìm thấy thông tin tài khoản trong session.");
@@ -117,7 +123,7 @@ public class CurriculumVitaeController {
             if (account != null) {
                 updatedCv.setAccount(account); // Gán đối tượng account vào blog
             }
-            CurriculumVitae updatedCurriculumVitae = cvService.saveCV(updatedCv);
+            CurriculumVitae updatedCurriculumVitae = cvService.updateCv(cvId,updatedCv);
             return ResponseEntity.ok(updatedCurriculumVitae);
         }
         return ResponseEntity.notFound().build();

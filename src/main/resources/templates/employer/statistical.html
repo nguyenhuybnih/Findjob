@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{/employer/fragments/head :: head}">
+  <!-- Thêm Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+<div class="app">
+  <div class="layout">
+    <div th:replace="~{/employer/fragments/header :: header}"> </div>
+    <div th:replace="~{/employer/fragments/sidenav :: sidenav}"> </div>
+
+    <!-- Page Container START -->
+    <div class="page-container">
+
+      <!-- Content Wrapper START -->
+      <div class="main-content">
+        <h1>Thống kê</h1>
+        <!-- Hiển thị số lượng CV đã ứng tuyển và số công việc đã đăng -->
+        <h2>Số lượng CV đã ứng tuyển vào công tyy: <span th:text="${totalApplications}"></span></h2>
+        <h2>Số công việc đã đăng: <span th:text="${totalJob}"></span></h2>
+        <canvas id="myChart" width="400" height="200"></canvas>
+
+        <!-- Biểu đồ -->
+      </div>
+
+    </div>
+    <!-- Page Container END -->
+
+  </div>
+</div>
+
+<div th:replace="~{/employer/fragments/script :: script}"></div>
+<script>
+  // Lấy dữ liệu từ Thymeleaf
+  var totalApplications = [[${totalApplications}]] || 0; // Nếu không có giá trị, gán 0
+  var totalJob = [[${totalJob}]] || 0; // Nếu không có giá trị, gán 0
+
+  // Cấu hình biểu đồ cột (Bar Chart)
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar', // Loại biểu đồ (bar)
+    data: {
+      labels: ['Số lượng CV ứng tuyển', 'Số công việc đã đăng'], // Nhãn cho các mục
+      datasets: [{
+        label: 'Số lượng CV ứng tuyển',
+        data: [totalApplications, 0], // Dữ liệu cho totalApplications
+        backgroundColor: 'rgba(54, 162, 235, 0.2)', // Màu nền cho CV ứng tuyển
+        borderColor: 'rgba(54, 162, 235, 1)', // Màu viền cho CV ứng tuyển
+        borderWidth: 1
+      }, {
+        label: 'Số công việc đã đăng',
+        data: [0, totalJob], // Dữ liệu cho totalJob
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // Màu nền cho công việc đã đăng
+        borderColor: 'rgba(255, 99, 132, 1)', // Màu viền cho công việc đã đăng
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true, // Đảm bảo trục y bắt đầu từ 0
+          stepSize: 1 // Đảm bảo bước nhảy trên trục y là 1
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+
+</html>

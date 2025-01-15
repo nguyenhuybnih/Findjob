@@ -73,9 +73,9 @@ public class ManageEmployerController {
     public ResponseEntity<Employersq> updateEmp(@PathVariable Integer id, @RequestBody Employersq em, HttpSession session) {
         Optional<Employersq> existingEm = employerService.getEmployerById(id);
         if (existingEm.isPresent()) {
+            em.setAccount(existingEm.get().getAccount());
+
             em.setEmployerId(id);
-            Employersq existingEmployer = existingEm.get();
-            em.setAccount(existingEmployer.getAccount());
 
             Employersq updatedEm = employerService.saveEmployer(em);
             return ResponseEntity.ok(updatedEm);
@@ -91,6 +91,18 @@ public class ManageEmployerController {
             return ResponseEntity.noContent().build(); // Trả về 204 No Content
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Trả về 404 nếu không tìm thấy
+        }
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<Employersq> getEmployerProfile(HttpSession session  ) {
+        Accounts account = (Accounts) session.getAttribute("account");
+
+        Employersq employer = employerService.findByAccount(account);
+        if (employer != null) {
+            return ResponseEntity.ok(employer);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

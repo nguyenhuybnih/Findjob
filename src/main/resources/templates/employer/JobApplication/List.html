@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="~{employer/fragments/head :: head}">
+
+</head>
+
+<body>
+<div class="app">
+    <div class="layout">
+        <div th:replace="~{employer/fragments/header :: header}"> </div>
+        <div th:replace="~{employer/fragments/sidenav :: sidenav}"> </div>
+
+
+        <!-- Page Container START -->
+        <div class="page-container">
+            <div class="main-content">
+                <div class="page-header">
+                    <h2 class="header-title">Danh sách công việc </h2>
+                    <div class="header-sub-title">
+
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row m-b-30">
+
+                            <div class="col-lg-4 text-left">
+                                <a class="btn btn-primary" href="/employer/Jobs/Create">
+                                    <i class="anticon anticon-plus-circle m-r-5"></i>
+                                    <span style="color: white;">Thêm mới </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover e-commerce-table">
+                                <thead>
+                                <tr>
+
+                                    <th>STT</th>
+                                    <th>Mã CV</th>
+                                    <th>Tên công việc</th>
+                                    <th>Tên ứng viên</th>
+                                    <th>Ngày ứng tuyển</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="applicationss, iterStat : ${applications}">
+                                    <td th:text="${iterStat.count}"></td>
+                                    <td th:text="${applicationss['cv_id']}"> </td>
+                                    <td th:text="${applicationss['job_name']}">  </td>
+                                    <td th:text="${applicationss['user_name']}">  </td>
+                                    <td th:text="${#dates.format(applicationss['application_date'], 'dd/MM/yyyy')}">  </td>
+
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

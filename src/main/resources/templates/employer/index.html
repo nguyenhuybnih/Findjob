@@ -22,6 +22,21 @@
         <h1>Trang của nhà tuyển dụng  </h1>
         <p>Xin chào, <span th:text="${username}">Tên tài khoản</span>!</p>
 
+        <div class="employer-profile">
+          <div class="employer-profile" style="text-align: center;">
+            <img
+                    id="avatar"
+                    alt="Avatar"
+                    style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc;"
+            />
+          <h2 id="employerName">Tên nhà tuyển dụng</h2>
+          <p><strong>Địa chỉ:</strong> <span id="employerAddress">Chưa có</span></p>
+          <p><strong>Website:</strong> <a id="employerWebsite" href="#" target="_blank"> </a></p>
+          <p><strong>Mô tả:</strong> <span id="description">Chưa có</span></p>
+        </div>
+
+
+
       </div>
 
     </div>
@@ -39,6 +54,29 @@
 
 <div th:replace="~{/employer/fragments/script :: script}"></div>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch('/admin/Employer/profile')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Không tìm thấy thông tin nhà tuyển dụng.");
+        }
+        return response.json();
+      })
+      .then(employer => {
+        document.getElementById("employerName").textContent = employer.employerName;
+        document.getElementById("employerAddress").textContent = employer.employerAddress;
+const websiteElement = document.getElementById("employerWebsite");
+      websiteElement.href = employer.employerWebsite;
+      websiteElement.textContent = employer.employerWebsite;
+        document.getElementById("description").textContent = employer.description;
+        document.getElementById("avatar").src = employer.employerAvatar;
+      })
+      .catch(error => {
+        console.error("Lỗi:", error.message);
+      });
+  });
+</script>
 
 
 </body>

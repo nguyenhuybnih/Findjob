@@ -39,4 +39,7 @@ public class BranchService {
     public void deleteBranchById(Integer id) {
         branchRepository.deleteById(id);
     }
+    public int countActiveBranch() {
+        return branchRepository.countByIsActiveTrue();  // Đếm các công việc đang hoạt động
+    }
 }

@@ -30,7 +30,6 @@ public class AccountController {
 
     @GetMapping("/data")
     @ResponseBody
-
     public List<Accounts> getAllUser() {
         return AccountService.getAllAccounts();
     }

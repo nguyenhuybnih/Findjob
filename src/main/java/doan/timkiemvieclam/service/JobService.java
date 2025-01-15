@@ -115,6 +115,7 @@ public class JobService {
         job.setBranch(jobDetails.getBranch());
         job.setAccount(jobDetails.getAccount());
         job.setSalary(jobDetails.getSalary());
+        job.setIsActive(jobDetails.getIsActive());
 
         return jobRepository.save(job);
     }
@@ -123,4 +124,13 @@ public class JobService {
     public void deleteJobById(Integer id) {
         jobRepository.deleteById(id);
     }
+
+    public int countActiveJobs() {
+        return jobRepository.countByIsActiveTrue();  // Đếm các công việc đang hoạt động
+    }
+    public int countApplicationsByAccountId(Integer accountId) {
+        return jobRepository.countJobsByAccountId(accountId);
+    }
+
+
 }

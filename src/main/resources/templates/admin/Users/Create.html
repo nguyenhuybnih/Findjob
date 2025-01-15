@@ -33,6 +33,14 @@
                                         <input type="file" id="userAvatar" onchange="uploadImage()">
                                         <img id="imageUrl" alt="Uploaded Image" style="width: 150px; height: 150px;">
                                     </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="accountName"> Tài khoản </label>
+                                        <input type="text" class="form-control" id="accountName" >
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="password">Mật khẩu </label>
+                                        <input type="password" class="form-control" id="password" >
+                                    </div>
 
                                     <div class="form-group">
                                         <label class="font-weight-semibold" for="userName">Tên người ứng tuyển </label>
@@ -54,6 +62,19 @@
                                         <label class="font-weight-semibold" for="description">Mô tả</label>
                                         <input type="text" class="form-control" id="description" >
                                     </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-semibold" for="role">Quyền </label>
+                                        <select class="form-control" id="role" >
+                                            <option value="3">Seeker</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="isActive" checked>
+                                            <label class="form-check-label" for="isActive" >Hoạt động</label>
+                                        </div>
+                                    </div>
+
 
                                     <div class="m-b-15 text-right ">
                                         <button type="submit" class="btn btn-primary">
@@ -124,6 +145,15 @@
             // Lấy URL ảnh từ Cloudinary (dưới dạng text)
             const imageUrl = await uploadResponse.text();
 
+            const accountData = {
+            accountName: document.getElementById('accountName').value,
+            password: document.getElementById('password').value,
+            role: {
+             roleId: document.getElementById('role').value
+            },
+            isActive: document.getElementById('isActive').checked,
+            };
+
             // Lấy dữ liệu từ biểu mẫu
             const userData = {
                 userAvatar: imageUrl,
@@ -133,6 +163,19 @@
                 userPhone: document.getElementById('userPhone').value,
                 description: document.getElementById('description').value
             };
+             const accountResponse = await fetch('/admin/Accounts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(accountData)
+            });
+
+            if (!accountResponse.ok) {
+            throw new Error('Lỗi khi thêm tài khoản');
+            }
+
+            const account = await accountResponse.json();
+            userData.account = account;
+
             const response = await fetch('/admin/Users', {
                 method: 'POST',
                 headers: {
@@ -142,9 +185,12 @@
             });
 
             if (response.ok) {
+                                 alert("Thêm mới thành công!");
+
                 window.location.href = '/admin/Users';
             }else
             {
+                                alert("Thêm mới thất bại!");
                 document.getElementById('responseMessage').innerHTML = 'Có lỗi xảy ra khi thêm mới người dùng.';
             }
         }

@@ -38,10 +38,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Users> addUser(@RequestBody Users user, HttpSession session) {
-        Accounts account = (Accounts) session.getAttribute("account"); // Lấy đối tượng account từ session
-        if (account != null) {
-            user.setAccount(account); // Gán đối tượng account vào blog
-        }
 
         Users newUser = UserService.saveUsers(user); // Lưu người dùng mới
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser); // Trả về người dùng mới với mã 201
@@ -67,9 +63,10 @@ public class UserController {
         Optional<Users> existingUser = UserService.getUsersById(id);
         if (existingUser.isPresent()) {
 
+            user.setAccount(existingUser.get().getAccount());
+
             user.setUserId(id); // Cập nhật ID cho đối tượng user
-            Users existingUsers = existingUser.get();
-            user.setAccount(existingUsers.getAccount());
+
 
             Users updatedUser = UserService.saveUsers(user);
             return ResponseEntity.ok(updatedUser);

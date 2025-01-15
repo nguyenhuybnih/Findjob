@@ -105,10 +105,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-            flatpickr("#dateOfBirth", {
-                dateFormat: "d/m/Y" // Định dạng ngày tháng năm: dd/mm/yyyy
-            });
-        });
+    flatpickr("#dateOfBirth", {
+        dateFormat: "d/m/Y", // Định dạng ngày tháng năm: dd/mm/yyyy
+        locale: "vi" // Đặt locale là tiếng Việt để hiển thị đúng định dạng ngày
+    });
+});
     document.addEventListener("DOMContentLoaded", function() {
         // Lắng nghe sự kiện submit của form
         const cvForm = document.getElementById('cvForm');

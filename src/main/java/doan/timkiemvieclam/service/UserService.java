@@ -53,4 +53,8 @@ public class UserService {
     public void deleteUsersById(Integer id) {
         usersRepository.deleteById(id);
     }
+
+    public int countbyUserId() {
+        return usersRepository.countByUserId();  // Đếm các công việc đang hoạt động
+    }
 }

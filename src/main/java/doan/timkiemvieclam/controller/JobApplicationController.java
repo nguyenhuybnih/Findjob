@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class JobApplicationController {
@@ -70,17 +71,38 @@ public class JobApplicationController {
     }
 
     @GetMapping("/employer/applications")
-    public String viewApplications() {
+    public String viewApplications(Model model, HttpSession session) {
+        Accounts account = (Accounts) session.getAttribute("account");
 
+        if (account == null) {
+            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+            return "redirect:/login";
+        }
 
-        return "employer/Application/index";  // Trả về trang ứng tuyển quản lý
+        // Lấy danh sách ứng tuyển theo accountId
+        List<Map<String, Object>> applications = JobApplicationService.getApplicationsByEmployerAccount(account.getAccountId());
+
+        // Đưa dữ liệu vào model để hiển thị trên giao diện
+        model.addAttribute("applications", applications);
+
+        return "employer/JobApplication/List";  // Trả về trang ứng tuyển quản lý
     }
 
-    @GetMapping("/api/job-applications")
-    @ResponseBody
-    public ResponseEntity<List<JobApplication>> getAllApplications() {
-        List<JobApplication> applications = JobApplicationService.getAllApplications();
-        return ResponseEntity.ok(applications);
+    @GetMapping("/employer/statistical")
+    public String getEmployerApplications(HttpSession session, Model model) {
+        Accounts account = (Accounts) session.getAttribute("account"); // Lấy accountId từ session
+        if (account == null) {
+            // Xử lý nếu session không có accountId (người dùng chưa đăng nhập)
+            return "redirect:/login"; // Ví dụ: redirect đến trang đăng nhập
+        }
+
+        int totalJob = JobService.countApplicationsByAccountId(account.getAccountId());
+        int totalApplications = JobApplicationService.countApplicationsByAccountId(account.getAccountId());
+
+        model.addAttribute("totalApplications", totalApplications);
+        model.addAttribute("totalJob", totalJob);
+
+        return "employer/statistical"; // Trả về trang hiển thị số lượng ứng tuyển
     }
 
 

@@ -49,6 +49,32 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${job.jobName}</td>
+                  <td>${job.jobDetails}</td>
+                  <td>${job.jobAddress}</td>
+                  <td>${job.branch.branchName}</td>
+                  <td>${job.salary}</td>
+
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="badge m-r-10 ${job.isActive ? 'badge-success badge-dot' : 'badge-danger badge-dot'}"></div>
+                      <div>${job.isActive ? 'Hoạt động' : 'Không hoạt động'}</div>
+                    </div>
+                  </td>
+
+                  <td class="text-right">
+                    <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right"
+                       onclick="editJob(${job.jobId})">
+                      <i class="anticon anticon-edit"></i>
+                    </a>
+                    <button class="btn btn-icon btn-hover btn-sm btn-rounded"
+                            onclick="deleteJob(${job.jobId})">
+                      <i class="anticon anticon-delete"></i>
+                    </button>
+                  </td>
+                </tr>
 
                 </tbody>
               </table>

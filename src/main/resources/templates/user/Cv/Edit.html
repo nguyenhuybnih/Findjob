@@ -19,7 +19,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-7">
-                    <h1 class="text-white font-weight-bold">Sửa CV</h1>
+                    <h1 class="text-white font-weight-bold">Sửa CV1</h1>
                     <p>Xin chào, <span th:text="${username12}">Tên tài khoản</span>!</p>
                 </div>
             </div>
@@ -33,6 +33,7 @@
                     <h4 class="text-black mb-4">Thông tin CV</h4>
                     <form id="cvForm">
                         <input type="hidden" id="cvId" name="cvId">
+                        <input type="hidden" id="accountId" name="accountId" th:value="${accountId}">
 
                         <div class="form-group">
                             <label for="fullName">Họ và Tên</label>
@@ -89,6 +90,7 @@
 <div th:replace="~{/user/fragments/script :: script}"></div>
 
 <script>
+
     const pathArray = window.location.pathname.split('/');
     const cvId = pathArray[pathArray.length - 1]; // Lấy ID CV từ URL
 
@@ -116,14 +118,15 @@
             });
     }
     function updateCv(){
-    const accountId = sessionStorage.getItem('accountId');
+    const accountId = document.getElementById("accountId").value; // Lấy giá trị accountId từ hidden input
+
      console.log('Account ID:', accountId);  // Thêm dòng này để kiểm tra
      if (!accountId) {
          alert("Không có accountId trong sessionStorage!");
          return;
      }
     const formData = {
-        account: accountId,
+        account: {accountId},
         fullName: document.getElementById("fullName").value,
         address: document.getElementById("address").value,
         dateOfBirth: document.getElementById("dateOfBirth").value,
@@ -148,6 +151,7 @@
         })
         .then(data => {
             alert("Cập nhật CV thành công!");
+              window.location.href = '/user/cv';
         })
         .catch(error => {
             alert("Lỗi khi cập nhật CV: " + error.message);

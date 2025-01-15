@@ -1,7 +1,7 @@
 package doan.timkiemvieclam.controller;
 
 import doan.timkiemvieclam.entity.Accounts;
-import doan.timkiemvieclam.service.AccountService;
+import doan.timkiemvieclam.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class HomeController {
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private JobService JobService;
+    @Autowired
+    private EmployerService EmployerService;
+    @Autowired
+    private BranchService BranchService;
+    @Autowired
+    private UserService UserService;
+    @Autowired
+    private BlogService BlogService;
 
     @RequestMapping("admin/home")
     public String index(HttpSession session, Model model){
@@ -62,8 +72,38 @@ public class HomeController {
 
 
     @GetMapping
-    public String index1(){
+    public String index1(Model model){
+        int totalJobs = JobService.countActiveJobs();  // Đếm tổng số công việc
+        model.addAttribute("totalJobs", totalJobs);    // Truyền giá trị vào model
+        int totalEmployer = EmployerService.countActiveEmployer();
+        model.addAttribute("totalEm", totalEmployer);
+        int totalBranch = BranchService.countActiveBranch();
+        model.addAttribute("totalBranch", totalBranch);
         return "user/index";
+    }
+
+    @GetMapping("Create/Cv")
+    public String createCv(){
+        return "user/Cv/Create";
+    }
+
+    @GetMapping("/admin/statistical")
+    public String getEmployerApplications(HttpSession session, Model model) {
+        Accounts account = (Accounts) session.getAttribute("account"); // Lấy accountId từ session
+        if (account == null) {
+            // Xử lý nếu session không có accountId (người dùng chưa đăng nhập)
+            return "redirect:/login"; // Ví dụ: redirect đến trang đăng nhập
+        }
+        int totalJobs = JobService.countActiveJobs();  // Đếm tổng số công việc
+        model.addAttribute("totalJobs", totalJobs);
+        int totalEmployer = EmployerService.countActiveEmployer();
+        model.addAttribute("totalEm", totalEmployer);
+        int totalUser = UserService.countbyUserId();
+        model.addAttribute("totalUser", totalUser);
+        int totalBlog = BlogService.countByBlogId();
+        model.addAttribute("totalBlog", totalBlog);
+
+        return "admin/statistical"; // Trả về trang hiển thị số lượng ứng tuyển
     }
 
 

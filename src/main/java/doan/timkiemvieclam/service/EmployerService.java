@@ -1,6 +1,7 @@
 package doan.timkiemvieclam.service;
 
 
+import doan.timkiemvieclam.entity.Accounts;
 import doan.timkiemvieclam.entity.Employersq;
 
 import doan.timkiemvieclam.repository.EmployerRepository;
@@ -49,5 +50,12 @@ public class EmployerService {
     // Xóa nhà tuyển dụng theo ID
     public void deleteEmployerById(Integer id) {
         employerRepository.deleteById(id);
+    }
+
+    public int countActiveEmployer() {
+        return employerRepository.countByIsActiveTrue();  // Đếm các công việc đang hoạt động
+    }
+    public Employersq findByAccount(Accounts account) {
+        return employerRepository.findByAccount(account);
     }
 }

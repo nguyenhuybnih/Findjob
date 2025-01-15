@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class JobApplicationService {
@@ -29,6 +30,15 @@ public class JobApplicationService {
     }
     public List<JobApplication> getAllApplications() {
         return jobApplicationRepository.findAll(); // Trả về tất cả các đơn ứng tuyển
+    }
+
+    public List<Map<String, Object>> getApplicationsByEmployerAccount(Integer accountId) {
+        // Gọi repository để lấy dữ liệu ứng tuyển theo accountId
+        return jobApplicationRepository.findApplicationsByAccountId(accountId);
+    }
+
+    public int countApplicationsByAccountId(Integer accountId) {
+        return jobApplicationRepository.countApplicationsByAccountId(accountId);
     }
 
 

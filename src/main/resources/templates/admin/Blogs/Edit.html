@@ -130,7 +130,6 @@
         const pathArray = window.location.pathname.split('/');
         const blogId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
         function loadBlog() {
-              event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
 
          fetch(`/admin/Blog/${blogId}`)
              .then(response => {
@@ -184,6 +183,8 @@
             });
         }
      function updateBlog() {
+                   event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
+
     const fileInput = document.getElementById('image');
     const file = fileInput.files[0]; // Lấy file ảnh từ input
     let imageUrl = document.getElementById("imageUrl").src; // Lấy URL hiện tại của ảnh

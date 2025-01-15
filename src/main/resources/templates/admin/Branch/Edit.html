@@ -31,7 +31,7 @@
 
                   <div class="form-group">
                     <label class="font-weight-semibold" for="branchName">Tên ngành nghề</label>
-                    <input type="text" class="form-control" id="branchName" name="branchName"  >
+                    <input type="text" class="form-control" id="branchName" name="branchName" >
                   </div>
                   <div class="form-group">
                     <div class="form-check">
@@ -64,7 +64,6 @@
   const branchId = pathArray[pathArray.length - 1]; // Lấy ID từ URL
 
     function loadBr() {
-          event.preventDefault(); // Ngăn chặn hành vi mặc định của biểu mẫu
 
     fetch(`/admin/Branch/${branchId}`)
         .then(response => {
@@ -115,7 +114,7 @@ function saveBranch() {
             document.getElementById("responseMessage").style.display = "block";
         });
     }
-      loadBr();
+loadBr()
 </script>
 </body>
 
